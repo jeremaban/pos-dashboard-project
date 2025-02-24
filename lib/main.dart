@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:intl/intl.dart';
+import 'package:pos_dashboard/utilities/dimensions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: const LoginScreen(),
     );
@@ -32,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _login() {
-    if (_usernameController.text == 'admin' && _passwordController.text == 'password') {
+    if (_usernameController.text == '1' && _passwordController.text == '1') {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
@@ -145,10 +147,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       );
+    } else if (_selectedIndex == 1) {
+      bodyContent = Container(
+        child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return Container(
+                child: Row(children: [
+                  Expanded(
+                    child: Container(
+                      height: Dimensions.listViewTextContainerSize,
+                      decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+                        color: Colors.white,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: Dimensions.height15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(padding: EdgeInsets.only(right: Dimensions.width20)),
+                            Image.asset("assets/image/food0.png",
+                              fit: BoxFit.contain,
+                              height: Dimensions.listViewImgSize,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: Dimensions.width20),
+                              child:  Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Item Name",
+                                    style: TextStyle(
+                                      fontSize: Dimensions.height15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text("Stock: 1",
+                                    style: TextStyle(
+                                      fontSize: Dimensions.height15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],)
+              );
+            }
+        ),
+
+      );
     } else {
       bodyContent = const Center(
         child: Text(
-          'Coming Soon',
+          'Settings',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       );

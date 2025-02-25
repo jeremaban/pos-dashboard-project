@@ -1,157 +1,60 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
-import '../sales/sales_details_page.dart';// Import SalesDetailsPage
+import '../sales/sales_summary.dart'; // Import SalesSummary
+import '../items/items_list.dart'; // Import ItemsList
 
-class SalesSummary extends StatefulWidget {
-  const SalesSummary({super.key});
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
 
   @override
-  _SalesSummaryState createState() => _SalesSummaryState();
+  // ignore: library_private_types_in_public_api
+  _DashboardScreenState createState() => _DashboardScreenState();
 }
 
-class _SalesSummaryState extends State<SalesSummary> {
-  DateTime selectedDate = DateTime.now();
+class _DashboardScreenState extends State<DashboardScreen> {
+  int _selectedIndex = 0;
+  String _appBarTitle = 'Dashboard';
 
-  void _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
-    );
-    if (pickedDate != null && pickedDate != selectedDate) {
-      setState(() {
-        selectedDate = pickedDate;
-      });
-    }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        _appBarTitle = 'Sales Summary';
+      } else if (_selectedIndex == 1) {
+        _appBarTitle = 'Items List';
+      } else {
+        _appBarTitle = 'Settings';
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                DateFormat.yMMMMd().format(selectedDate),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              ElevatedButton(
-                onPressed: () => _selectDate(context),
-                child: const Text("Select Date"),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Center(
-            child: Text(
-              'Sales Summary',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 40),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SalesDetailsPage()),
-              );
-            },
-            child: Column(
-              children: [
-                _buildPieChart('Receipts', 25, Colors.blue, 80),
-                const SizedBox(height: 40),
-                _buildPieChart('Net Sales', 60, Colors.green, 100),
-                const SizedBox(height: 40),
-                _buildPieChart('Average Sale', 15, Colors.orange, 80),
-                const SizedBox(height: 40),
-                _buildBarChart(),
-              ],
-            ),
-          ),
+    Widget bodyContent;
+
+    if (_selectedIndex == 0) {
+      bodyContent = const SalesSummary();
+    } else if (_selectedIndex == 1) {
+      bodyContent = const ItemsList();
+    } else {
+      bodyContent = const Center(child: Text('Settings'));
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_appBarTitle),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: bodyContent,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: 'Sales'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Items'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blueAccent,
+        onTap: _onItemTapped,
       ),
-    );
-  }
-
-  Widget _buildBarChart() {
-    List<DateTime> dates = [
-      DateTime.now().subtract(const Duration(days: 2)),
-      DateTime.now().subtract(const Duration(days: 1)),
-      DateTime.now(),
-    ];
-    List<double> netSales = [2000, 3500, 5000];
-
-    return SizedBox(
-      height: 200,
-      child: BarChart(
-        BarChartData(
-          barGroups: dates
-              .asMap()
-              .map((index, date) => MapEntry(
-                  index,
-                  BarChartGroupData(x: index, barRods: [
-                    BarChartRodData(toY: netSales[index], color: Colors.blue)
-                  ])))
-              .values
-              .toList(),
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitles: (value, meta) {
-                  final index = value.toInt();
-                  if (index >= 0 && index < dates.length) {
-                    return DateFormat('MM/dd').format(dates[index]);
-                  }
-                  return '';
-                },
-              ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: true),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPieChart(String title, double percentage, Color color, double size) {
-    return Column(
-      children: [
-        Center(
-          child: SizedBox(
-            height: size,
-            width: size,
-            child: PieChart(
-              PieChartData(
-                sectionsSpace: 2,
-                centerSpaceRadius: size * 0.4,
-                sections: [
-                  PieChartSectionData(
-                    value: percentage,
-                    color: color,
-                    showTitle: false,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          '$title: ${percentage.toStringAsFixed(1)}%',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
     );
   }
 }

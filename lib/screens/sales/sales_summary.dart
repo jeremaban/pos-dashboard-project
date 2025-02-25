@@ -82,47 +82,49 @@ class _SalesSummaryState extends State<SalesSummary> {
   }
 
   Widget _buildBarChart() {
-    List<DateTime> dates = [
-      DateTime.now().subtract(const Duration(days: 2)),
-      DateTime.now().subtract(const Duration(days: 1)),
-      DateTime.now(),
-    ];
-    List<double> netSales = [2000, 3500, 5000];
+  List<DateTime> dates = [
+    DateTime.now().subtract(const Duration(days: 2)),
+    DateTime.now().subtract(const Duration(days: 1)),
+    DateTime.now(),
+  ];
+  List<double> netSales = [2000, 3500, 5000];
 
-    return SizedBox(
-      height: 200,
-      child: BarChart(
-        BarChartData(
-          barGroups: dates
-              .asMap()
-              .map((index, date) => MapEntry(
+  return SizedBox(
+    height: 200,
+    child: BarChart(
+      BarChartData(
+        barGroups: dates
+            .asMap()
+            .map((index, date) => MapEntry(
                   index,
                   BarChartGroupData(x: index, barRods: [
                     BarChartRodData(toY: netSales[index], color: Colors.blue)
-                  ])))
-              .values
-              .toList(),
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitles: (value, meta) {
-                  final index = value.toInt();
-                  if (index >= 0 && index < dates.length) {
-                    return DateFormat('MM/dd').format(dates[index]);
-                  }
-                  return '';
-                },
-              ),
+                  ]),
+                ))
+            .values
+            .toList(),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index >= 0 && index < dates.length) {
+                  return Text(DateFormat('MM/dd').format(dates[index]),
+                      style: const TextStyle(fontSize: 10));
+                }
+                return const Text('');
+              },
             ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: true),
-            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPieChart(String title, double percentage, Color color, double size) {
     return Column(

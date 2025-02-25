@@ -30,58 +30,90 @@ class _SalesSummaryState extends State<SalesSummary> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+Widget build(BuildContext context) {
+  return SingleChildScrollView(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              DateFormat.yMMMMd().format(selectedDate),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            ElevatedButton(
+              onPressed: () => _selectDate(context),
+              child: const Text("Select Date"),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Center(
+          child: Text(
+            'Sales Summary',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 50),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SalesDetailsPage()),
+            );
+          },
+          child: Column(
             children: [
-              Text(
-                DateFormat.yMMMMd().format(selectedDate),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              ElevatedButton(
-                onPressed: () => _selectDate(context),
-                child: const Text("Select Date"),
-              ),
+              _buildPieChart('Receipts', 15, Colors.blue),
+              const SizedBox(height: 55), // Space between Receipts and Net Sales
+              _buildPieChart('Net Sales', 60, Colors.green),
+              const SizedBox(height: 55), // Space between Net Sales and Average Sale
+              _buildPieChart('Average Sale', 25, Colors.orange),
+              const SizedBox(height: 55), // Space before Bar Chart
+              _buildBarChart(),
             ],
           ),
-          const SizedBox(height: 10),
-          const Center(
-            child: Text(
-              'Sales Summary',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 40),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SalesDetailsPage()),
-              );
-            },
-            child: Column(
-              children: [
-                _buildPieChart('Receipts', 25, Colors.blue, 80),
-                const SizedBox(height: 40),
-                _buildPieChart('Net Sales', 60, Colors.green, 100),
-                const SizedBox(height: 40),
-                _buildPieChart('Average Sale', 15, Colors.orange, 80),
-                const SizedBox(height: 40),
-                _buildBarChart(),
+        ),
+      ],
+    ),
+  );
+}
+
+  Widget _buildPieChart(String title, double percentage, Color color) {
+  double size = 80; // Default size (you can adjust this)
+
+  return Column(
+    children: [
+      Center(
+        child: SizedBox(
+          height: size,
+          width: size,
+          child: PieChart(
+            PieChartData(
+              sectionsSpace: 2,
+              centerSpaceRadius: 40,
+              sections: [
+                PieChartSectionData(
+                  value: percentage,
+                  color: color,
+                  showTitle: false,
+                ),
               ],
             ),
           ),
-        ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildBarChart() {
+      const SizedBox(height: 40), // Reduced space to 10
+      Text(
+        '$title: ${percentage.toStringAsFixed(1)}%',
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    ],
+  );
+}
+Widget _buildBarChart() {
   List<DateTime> dates = [
     DateTime.now().subtract(const Duration(days: 2)),
     DateTime.now().subtract(const Duration(days: 1)),
@@ -90,7 +122,8 @@ class _SalesSummaryState extends State<SalesSummary> {
   List<double> netSales = [2000, 3500, 5000];
 
   return SizedBox(
-    height: 200,
+    height: 300, // Increased height
+    width: 280, // Decreased width
     child: BarChart(
       BarChartData(
         barGroups: dates
@@ -104,6 +137,7 @@ class _SalesSummaryState extends State<SalesSummary> {
             .values
             .toList(),
         titlesData: FlTitlesData(
+          show: true,
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -118,42 +152,23 @@ class _SalesSummaryState extends State<SalesSummary> {
             ),
           ),
           leftTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: true),
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                String text = '${value.toInt()}K';
+                return Text(text, style: const TextStyle(fontSize: 10));
+              },
+            ),
+          ),
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
           ),
         ),
       ),
     ),
   );
 }
-
-  Widget _buildPieChart(String title, double percentage, Color color, double size) {
-    return Column(
-      children: [
-        Center(
-          child: SizedBox(
-            height: size,
-            width: size,
-            child: PieChart(
-              PieChartData(
-                sectionsSpace: 2,
-                centerSpaceRadius: size * 0.4,
-                sections: [
-                  PieChartSectionData(
-                    value: percentage,
-                    color: color,
-                    showTitle: false,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          '$title: ${percentage.toStringAsFixed(1)}%',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
 }

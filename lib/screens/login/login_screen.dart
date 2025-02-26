@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_dashboard/utilities/dimensions.dart';
 import '../dashboard/dashboard_screen.dart'; // Import DashboardScreen
 
 class LoginScreen extends StatelessWidget {
@@ -12,7 +13,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Dimensions.height16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -20,18 +21,18 @@ class LoginScreen extends StatelessWidget {
               controller: usernameController,
               decoration: const InputDecoration(labelText: 'Username'),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: Dimensions.height10),
             TextField(
               controller: passwordController,
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                  MaterialPageRoute(builder: (context) => DashboardScreen()),
                 );
               },
               child: const Text('Login'),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pos_dashboard/utilities/dimensions.dart';
 
 class SalesDetailsPage extends StatefulWidget {
   const SalesDetailsPage({super.key});
@@ -48,37 +49,37 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
       appBar: AppBar(title: const Text('Sales Details'), backgroundColor: Colors.blueAccent),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Dimensions.height16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(DateFormat.yMMMMd().format(_selectedDate), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(DateFormat.yMMMMd().format(_selectedDate), style: TextStyle(fontSize: Dimensions.font18, fontWeight: FontWeight.bold)),
                 ElevatedButton(onPressed: () => _selectDate(context), child: const Text('Select Date')),
               ],
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: Dimensions.height30),
             _buildDetailRow('Gross Sales', grossSales, isBold: true),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Refunds', refunds),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Discounts', discounts),
             const Divider(),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Net Sales', netSales, isBold: true),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Taxes', taxes),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Tips', tips),
             const Divider(),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Total Tendered', totalTendered, isBold: true),
             const Divider(),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Cost of Goods', costOfGoods),
-            const SizedBox(height: 20),
+            SizedBox(height: Dimensions.height20),
             _buildDetailRow('Gross Profit', grossProfit, isBold: true),
           ],
         ),
@@ -91,8 +92,8 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(fontSize: 16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-        Text('₱${value.toStringAsFixed(2)}', style: TextStyle(fontSize: 16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        Text(label, style: TextStyle(fontSize: Dimensions.font16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        Text('₱${value.toStringAsFixed(2)}', style: TextStyle(fontSize: Dimensions.font16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
       ],
     ),
   );

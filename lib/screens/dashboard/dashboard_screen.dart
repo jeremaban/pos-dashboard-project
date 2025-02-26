@@ -3,13 +3,22 @@ import '../sales/sales_summary.dart';
 import '../items/items_list.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  DashboardScreen({super.key});
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+
+  final List<Map<String, String>> _itemsListOptions = [
+    {'title': 'Inventory', 'value': 'inventory'},
+    {'title': 'Critical Level', 'value': 'critical_level'},
+    {'title': 'Out of Stock', 'value': 'out_of_stock'},
+  ]; //popup options for items
+
+  String _currentListOption = 'Inventory'; //track current list selection
+
   int _selectedIndex = 0;
   String _appBarTitle = 'Sales';
 
@@ -26,6 +35,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  void _showItemsListOptions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Option'),
+          content: Container(
+            width: double.minPositive,
+            child: ListView(
+              shrinkWrap: true,
+              children: _itemsListOptions.map((option) {
+                return ListTile(
+                  title: Text(option['title']!),
+                  onTap: () {
+                    setState(() {
+                      _currentListOption = option['title']!;
+                      _appBarTitle = 'Items List';
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget bodyContent;
@@ -33,14 +71,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (_selectedIndex == 0) {
       bodyContent = const SalesSummary();
     } else if (_selectedIndex == 1) {
-      bodyContent = const ItemsList();
+      bodyContent = ItemsList(
+        listType: _currentListOption.toLowerCase().replaceAll(' ', '_')
+      );
     } else {
       bodyContent = const Center(child: Text('Settings'));
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitle),
+        title: _selectedIndex == 1 ? Center(
+          child: GestureDetector(
+            onTap: () {
+              _showItemsListOptions(context);
+            },
+            child: Row(mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_currentListOption),
+              Icon(Icons.arrow_drop_down)
+            ],)
+          )
+        ) : Center(child: Text(_appBarTitle)),
         backgroundColor: Colors.blueAccent,
       ),
       body: bodyContent,

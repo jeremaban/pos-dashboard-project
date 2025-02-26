@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import '../sales/sales_summary.dart'; // Import SalesSummary
-import '../items/items_list.dart'; // Import ItemsList
+import '../sales/sales_summary.dart';
+import '../items/items_list.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _DashboardScreenState createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
-  String _appBarTitle = 'Dashboard';
+  String _appBarTitle = 'Sales';
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       if (index == 0) {
-        _appBarTitle = 'Sales Summary';
+        _appBarTitle = 'Sales';
       } else if (_selectedIndex == 1) {
         _appBarTitle = 'Items List';
       } else {

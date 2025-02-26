@@ -1,9 +1,9 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import 'sales_details_page.dart'; // Import SalesDetailsPage
+import 'sales_details_page.dart';
+import 'pie_chart_widget.dart';
+import 'bar_chart_widget.dart';
+import '../employees/employee_widget.dart';
 
 class SalesSummary extends StatefulWidget {
   const SalesSummary({super.key});
@@ -14,161 +14,95 @@ class SalesSummary extends StatefulWidget {
 
 class _SalesSummaryState extends State<SalesSummary> {
   DateTime selectedDate = DateTime.now();
+  final List<DateTime> dates = [
+    DateTime.now().subtract(const Duration(days: 2)),
+    DateTime.now().subtract(const Duration(days: 1)),
+    DateTime.now(),
+  ];
+  final List<double> netSales = [200, 350, 500];
 
   void _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
     if (pickedDate != null && pickedDate != selectedDate) {
-      setState(() {
-        selectedDate = pickedDate;
-      });
+      setState(() => selectedDate = pickedDate);
     }
   }
 
   @override
-Widget build(BuildContext context) {
-  return SingleChildScrollView(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDateSelector(context),
+          const SizedBox(height: 20),
+          const Center(
+            child: Text('SALES SUMMARY', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          ),
+          const SizedBox(height: 20),
+          _buildSalesChartsAndDetails(context),
+          const SizedBox(height: 20),
+          _buildEmployeeSection(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateSelector(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Text(DateFormat.yMMMMd().format(selectedDate), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ElevatedButton(onPressed: () => _selectDate(context), child: const Text("Select Date")),
+      ],
+    );
+  }
+
+  Widget _buildSalesChartsAndDetails(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SalesDetailsPage())),
+      child: ListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [
+          SizedBox(height: 35),
+          PieChartWidget(title: 'Receipts', percentage: 15, color: Colors.blue),
+          SizedBox(height: 55),
+          PieChartWidget(title: 'Net Sales', percentage: 60, color: Colors.green),
+          SizedBox(height: 55),
+          PieChartWidget(title: 'Average Sale', percentage: 25, color: Colors.orange),
+          SizedBox(height: 55),
+        ] + [BarChartWidget(dates: dates, netSales: netSales)],
+      ),
+    );
+  }
+
+  Widget _buildEmployeeSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            'EMPLOYEES',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const Column(
           children: [
-            Text(
-              DateFormat.yMMMMd().format(selectedDate),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            ElevatedButton(
-              onPressed: () => _selectDate(context),
-              child: const Text("Select Date"),
-            ),
+            EmployeeWidget(employeeName: 'Owner', netSales: 2268.50, circleColor: Colors.red),
+            EmployeeWidget(employeeName: 'John', netSales: 1617.70, circleColor: Colors.brown),
+            EmployeeWidget(employeeName: 'Jane', netSales: 2560.60, circleColor: Colors.green),
           ],
         ),
-        const SizedBox(height: 10),
-        const Center(
-          child: Text(
-            'Sales Summary',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 50),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SalesDetailsPage()),
-            );
-          },
-          child: Column(
-            children: [
-              _buildPieChart('Receipts', 15, Colors.blue),
-              const SizedBox(height: 55), // Space between Receipts and Net Sales
-              _buildPieChart('Net Sales', 60, Colors.green),
-              const SizedBox(height: 55), // Space between Net Sales and Average Sale
-              _buildPieChart('Average Sale', 25, Colors.orange),
-              const SizedBox(height: 55), // Space before Bar Chart
-              _buildBarChart(),
-            ],
-          ),
-        ),
       ],
-    ),
-  );
-}
-
-  Widget _buildPieChart(String title, double percentage, Color color) {
-  double size = 80; // Default size (you can adjust this)
-
-  return Column(
-    children: [
-      Center(
-        child: SizedBox(
-          height: size,
-          width: size,
-          child: PieChart(
-            PieChartData(
-              sectionsSpace: 2,
-              centerSpaceRadius: 40,
-              sections: [
-                PieChartSectionData(
-                  value: percentage,
-                  color: color,
-                  showTitle: false,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      const SizedBox(height: 40), // Reduced space to 10
-      Text(
-        '$title: ${percentage.toStringAsFixed(1)}%',
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-    ],
-  );
-}
-Widget _buildBarChart() {
-  List<DateTime> dates = [
-    DateTime.now().subtract(const Duration(days: 2)),
-    DateTime.now().subtract(const Duration(days: 1)),
-    DateTime.now(),
-  ];
-  List<double> netSales = [2000, 3500, 5000];
-
-  return SizedBox(
-    height: 300, // Increased height
-    width: 280, // Decreased width
-    child: BarChart(
-      BarChartData(
-        barGroups: dates
-            .asMap()
-            .map((index, date) => MapEntry(
-                  index,
-                  BarChartGroupData(x: index, barRods: [
-                    BarChartRodData(toY: netSales[index], color: Colors.blue)
-                  ]),
-                ))
-            .values
-            .toList(),
-        titlesData: FlTitlesData(
-          show: true,
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                final index = value.toInt();
-                if (index >= 0 && index < dates.length) {
-                  return Text(DateFormat('MM/dd').format(dates[index]),
-                      style: const TextStyle(fontSize: 10));
-                }
-                return const Text('');
-              },
-            ),
-          ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                String text = '${value.toInt()}K';
-                return Text(text, style: const TextStyle(fontSize: 10));
-              },
-            ),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-        ),
-      ),
-    ),
-  );
-}
+    );
+  }
 }

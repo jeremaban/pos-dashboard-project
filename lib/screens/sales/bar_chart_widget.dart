@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:pos_dashboard/utilities/dimensions.dart';
 
 class BarChartWidget extends StatelessWidget {
   final List<DateTime> dates;
@@ -15,7 +16,7 @@ class BarChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: Dimensions.height300,
       child: BarChart(
         BarChartData(
           barGroups: dates
@@ -37,7 +38,7 @@ class BarChartWidget extends StatelessWidget {
                   final index = value.toInt();
                   if (index >= 0 && index < dates.length) {
                     return Text(DateFormat('MM/dd').format(dates[index]),
-                        style: const TextStyle(fontSize: 10));
+                        style: TextStyle(fontSize: Dimensions.font10));
                   }
                   return const Text('');
                 },
@@ -48,7 +49,7 @@ class BarChartWidget extends StatelessWidget {
                 showTitles: true,
                 getTitlesWidget: (value, meta) {
                   String text = '${value.toInt()}';
-                  return Text(text, style: const TextStyle(fontSize: 10));
+                  return Text(text, style: TextStyle(fontSize: Dimensions.font10));
                 },
               ),
             ),

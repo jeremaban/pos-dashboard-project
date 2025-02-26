@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pos_dashboard/utilities/dimensions.dart';
 
 class PieChartWidget extends StatelessWidget {
   final String title;
@@ -15,14 +16,12 @@ class PieChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double size = 80;
-
     return Column(
       children: [
         Center(
           child: SizedBox(
-            height: size,
-            width: size,
+            height: Dimensions.height80,
+            width: Dimensions.width80,
             child: PieChart(
               PieChartData(
                 sectionsSpace: 2,
@@ -38,10 +37,10 @@ class PieChartWidget extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 40),
+        SizedBox(height: Dimensions.height40),
         Text(
           '$title: ${percentage.toStringAsFixed(1)}%',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: Dimensions.font16, fontWeight: FontWeight.bold),
         ),
       ],
     );

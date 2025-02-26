@@ -1,0 +1,1 @@
+ C:\\Users\\User\\Documents\\Internship\\pos-dashboard\\pos_dashboard\\.dart_tool\\flutter_build\\7793d3170ab02ecdc631bbd7c66c847f\\dart_build_result.json: 

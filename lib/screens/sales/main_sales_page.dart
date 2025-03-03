@@ -8,14 +8,14 @@ import 'pie_chart_widget.dart';
 import 'bar_chart_widget.dart';
 import '../items/employee_widget.dart';
 
-class SalesSummary extends StatefulWidget {
-  const SalesSummary({super.key});
+class MainSalesPage extends StatefulWidget {
+  const MainSalesPage({super.key});
 
   @override
-  _SalesSummaryState createState() => _SalesSummaryState();
+  _MainSalesPage createState() => _MainSalesPage();
 }
 
-class _SalesSummaryState extends State<SalesSummary> {
+class _MainSalesPage extends State<MainSalesPage> {
   DateTime selectedDate = DateTime.now();
   final List<DateTime> dates = [
     DateTime.now().subtract(const Duration(days: 2)),
@@ -35,6 +35,15 @@ class _SalesSummaryState extends State<SalesSummary> {
       setState(() => selectedDate = pickedDate);
     }
   }
+  Widget _buildDateSelector(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(DateFormat.yMMMMd().format(selectedDate), style: TextStyle(fontSize: Dimensions.font18, fontWeight: FontWeight.bold)),
+        ElevatedButton(onPressed: () => _selectDate(context), child: const Text("Select Date")),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,23 +60,13 @@ class _SalesSummaryState extends State<SalesSummary> {
           SizedBox(height: Dimensions.height20),
           _buildSalesChartsAndDetails(context),
           SizedBox(height: Dimensions.height20),
-          _buildSalesSelection(),
+          _buildItemsSelection(),
           SizedBox(height: Dimensions.height20),
           _buildCategoriesSection(),
           SizedBox(height: Dimensions.height20),
           _buildEmployeeSection(),
         ],
       ),
-    );
-  }
-
-  Widget _buildDateSelector(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(DateFormat.yMMMMd().format(selectedDate), style: TextStyle(fontSize: Dimensions.font18, fontWeight: FontWeight.bold)),
-        ElevatedButton(onPressed: () => _selectDate(context), child: const Text("Select Date")),
-      ],
     );
   }
 
@@ -90,7 +89,7 @@ class _SalesSummaryState extends State<SalesSummary> {
     );
   }
 
-  Widget _buildSalesSelection() {
+  Widget _buildItemsSelection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

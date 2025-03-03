@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pos_dashboard/utilities/dimensions.dart';
-import '../dashboard/dashboard_screen.dart'; // Import DashboardScreen
+import '../dashboard/dashboard_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -11,7 +11,7 @@ class LoginScreen extends StatelessWidget {
     TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Login'), backgroundColor: Colors.blueAccent),
       body: Padding(
         padding: EdgeInsets.all(Dimensions.height16),
         child: Column(

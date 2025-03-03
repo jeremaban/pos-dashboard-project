@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../sales/sales_summary.dart';
+import '../sales/main_sales_page.dart';
 import '../items/items_list.dart';
 
 class DashboardScreen extends StatefulWidget {
-  DashboardScreen({super.key});
+  const DashboardScreen({super.key});
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -41,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Select Option'),
-          content: Container(
+          content: SizedBox(
             width: double.minPositive,
             child: ListView(
               shrinkWrap: true,
@@ -69,7 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Widget bodyContent;
 
     if (_selectedIndex == 0) {
-      bodyContent = const SalesSummary();
+      bodyContent = const MainSalesPage();
     } else if (_selectedIndex == 1) {
       bodyContent = ItemsList(
         listType: _currentListOption.toLowerCase().replaceAll(' ', '_')

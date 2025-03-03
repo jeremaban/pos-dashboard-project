@@ -41,4 +41,6 @@ class Dimensions {
   static double font16 = screenHeight / 48.65000152587891;
   static double font18 = screenHeight / 43.24444580078125;
 
+  //iconsize
+  static double iconSize5 = screenHeight / 155.6800048828125;
 }

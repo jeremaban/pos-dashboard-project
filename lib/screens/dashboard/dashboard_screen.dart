@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_dashboard/screens/login/settings_screen.dart';
 import '../sales/sales_summary.dart';
 import '../items/items_list.dart';
 
@@ -75,7 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         listType: _currentListOption.toLowerCase().replaceAll(' ', '_')
       );
     } else {
-      bodyContent = const Center(child: Text('Settings'));
+      bodyContent = const SettingsScreen();
     }
 
     return Scaffold(

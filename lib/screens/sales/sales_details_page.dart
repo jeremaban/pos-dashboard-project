@@ -11,12 +11,17 @@ class SalesDetailsPage extends StatefulWidget {
 class _SalesDetailsPageState extends State<SalesDetailsPage> {
   DateTime _selectedDate = DateTime.now();
   Map<String, double> _salesData = {
-    'Gross Sales': 1500.00, 'Refunds': 100.00, 'Discounts': 50.00,
+    'Gross Sales': 1500.00,
+    'Refunds': 100.00,
+    'Discounts': 50.00,
   };
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-      context: context, initialDate: _selectedDate, firstDate: DateTime(2000), lastDate: DateTime(2101),
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -27,9 +32,15 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
   }
 
   Map<String, double> _fetchSalesData(DateTime date) => {
-    'Gross Sales': 1500.00, 'Refunds': 100.00, 'Discounts': 50.00,
-    'Net Sales': 1350.00, 'Taxes': 135.00, 'Tips': 75.00,
-    'Total Tendered': 1560.00, 'Cost of Goods': 600.00, 'Gross Profit': 750.00,
+    'Gross Sales': 1500.00,
+    'Refunds': 100.00,
+    'Discounts': 50.00,
+    'Net Sales': 1350.00,
+    'Taxes': 135.00,
+    'Tips': 75.00,
+    'Total Tendered': 1560.00,
+    'Cost of Goods': 600.00,
+    'Gross Profit': 750.00,
   };
 
   @override
@@ -46,7 +57,10 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
     final grossProfit = data['Gross Profit'] ?? 0.0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sales Details'), backgroundColor: Colors.blueAccent),
+      appBar: AppBar(
+        title: const Text('Sales Details'),
+        backgroundColor: Colors.blueAccent,
+      ),
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.all(Dimensions.height16),
@@ -56,8 +70,17 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(DateFormat.yMMMMd().format(_selectedDate), style: TextStyle(fontSize: Dimensions.font18, fontWeight: FontWeight.bold)),
-                ElevatedButton(onPressed: () => _selectDate(context), child: const Text('Select Date')),
+                Text(
+                  DateFormat.yMMMMd().format(_selectedDate),
+                  style: TextStyle(
+                    fontSize: Dimensions.font18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => _selectDate(context),
+                  child: const Text('Select Date'),
+                ),
               ],
             ),
             SizedBox(height: Dimensions.height30),
@@ -87,14 +110,27 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
     );
   }
 
-  Widget _buildDetailRow(String label, double value, {bool isBold = false}) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(fontSize: Dimensions.font16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-        Text('₱${value.toStringAsFixed(2)}', style: TextStyle(fontSize: Dimensions.font16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-      ],
-    ),
-  );
+  Widget _buildDetailRow(String label, double value, {bool isBold = false}) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: Dimensions.font16,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            Text(
+              '₱${value.toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: Dimensions.font16,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      );
 }

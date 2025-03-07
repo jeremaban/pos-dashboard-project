@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pos_dashboard/controllers/product_controller.dart';
+import 'package:pos_dashboard/utilities/app_constants.dart';
 import 'package:pos_dashboard/utilities/dimensions.dart';
 
 class ItemsList extends StatefulWidget {
 
   final String listType;
-
+ 
   const ItemsList({super.key, this.listType = 'inventory'});
 
     @override
@@ -12,82 +15,94 @@ class ItemsList extends StatefulWidget {
 }
 
 class _ItemsListState extends State<ItemsList>{
-    final List<Map<String, dynamic>> items = [
-      {'name': 'Item 1', 'stock': 10, 'image': 'food0.png'},
-      {'name': 'Item 2', 'stock': 3, 'image': 'food1.png'},
-      {'name': 'Item 3', 'stock': 0, 'image': 'food2.png'},
-      {'name': 'Item 4', 'stock': 7, 'image': 'food3.png'},
-      {'name': 'Item 5', 'stock': 2, 'image': 'food4.png'},
-    ];
+    final PopularProductController popularProductController = Get.find<PopularProductController>();
 
-    List<Map<String, dynamic>> getItems() {
+    @override
+    void initState() {
+      super.initState();
+      _loadData();
+    }
+
+    void _loadData() async {
+      await popularProductController.getPopularProductList();
+    }
+
+    List<dynamic> getItems() {
+      if(popularProductController.popularProductList.isEmpty) {
+        return [];
+      }
+
       switch (widget.listType) {
         case 'critical_level':
-        return items.where(
-          (item) => item['stock'] > 0 && item['stock'] < 5
+        return popularProductController.popularProductList.where(
+          (item) => item.stars > 0 && item.stars < 5
           ).toList();
 
         case 'out_of_stock':
-        return items.where(
-          (item) => item['stock'] == 0
+        return popularProductController.popularProductList.where(
+          (item) => item.stars == 0
           ).toList();
         
         case 'inventory':
         default:
-          return items;
+          return popularProductController.popularProductList;
       }
     }
 
-      @override
+    @override
     Widget build(BuildContext context) {
-      final sortedItems = getItems();
+      return GetBuilder<PopularProductController>(
+        builder: (controller) {
+      
+          List<dynamic> items = getItems();
 
-      return ListView.builder(
-        itemCount: sortedItems.length,
-        itemBuilder: (context, index) {
+        
+          return items.isEmpty
+          ? const Center(child: Text("No items found"))
+          : ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              var item = items[index];
 
-          final item = sortedItems[index];
+              String stockStatus;
+              Color stockColor;
+              int stock = item.stars;
 
-          String stockStatus;
-          Color stockColor;
-          int stock = item['stock'];
+              if (stock == 0) {
+                stockStatus = "Out of Stock";
+                stockColor = Colors.redAccent;
+              } else if (stock < 5) {
+                stockStatus = "Critical Level: $stock";
+                stockColor = Colors.orangeAccent;
+              } else {
+                stockStatus = "$stock in stock";
+                stockColor = Colors.black;
+              }
 
-          if (stock == 0) {
-            stockStatus = "Out of Stock";
-            stockColor = Colors.redAccent;
-          } else if (stock < 5) {
-            stockStatus = "Critical Level: $stock";
-            stockColor = Colors.orangeAccent;
-          } else {
-            stockStatus = "Stock: $stock";
-            stockColor = Colors.black;
-          }
-
-          return Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey, 
-                width: 0.1,
+              return ListTile(
+                leading: Image.network(
+                  "${AppConstants.BASE_URL}${AppConstants.UPLOAD_URL}${item.img}",
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+                  errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.image_not_supported),
                 ),
-            ),
-            
-            child: ListTile(
-              leading: Image.asset(
-                "assets/image/${item['image']}",
-                width: Dimensions.width50,
-                height: Dimensions.height50,
-                errorBuilder: (context, error, stackTracer) {
-                  return Image.asset("assets/image/food0.png", width: Dimensions.width50, height: Dimensions.height50);
-                },
-              ),
-                title: Text("${item['name']}"),
-                subtitle: Text(
-                stockStatus,
-                style: TextStyle(color: stockColor),
-            ),
-            )
-          );
+                  title: Text(item.name),
+                  subtitle: Text(
+                    stockStatus,
+                    style: TextStyle(color: stockColor),
+                  ),
+              );
+            },
+            );
         }
       );
-  }
-}
+    }}

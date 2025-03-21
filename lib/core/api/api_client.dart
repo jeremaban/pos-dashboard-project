@@ -2,38 +2,69 @@ import 'package:dio/dio.dart';
 
 class ApiClient {
   final Dio _dio;
-
+  
   ApiClient({required String baseUrl})
       : _dio = Dio(BaseOptions(
           baseUrl: baseUrl,
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+            },
+          connectTimeout: const Duration(milliseconds: 5000),
+          receiveTimeout: const Duration(milliseconds: 3000),
         ));
 
-  Future<Response> getData(String uri) async {
-    try {
-      Response response = await _dio.get(uri);
-      return response;
-    } catch (e) {
-      print("GET request failed: $e");
-      return Response(
-        requestOptions: RequestOptions(path: uri),
-        statusCode: 500,
-        statusMessage: "Internal Server Error",
-      );
-    }
-  }
+  // Future<Response> getData(String uri, {Map<String, dynamic>? queryParams}) async {
+  //   try {
+  //     Response response = await _dio.get(uri, queryParameters: queryParams);
+  //     return response;
+  //   } on DioException catch (e) {
+  //     print("GET request failed on api_client.dart: ${e.type} - ${e.message}");
+  //     if (e.response != null) {
+  //       return e.response!;
+  //     } else {
+  //       return Response(
+  //         requestOptions: RequestOptions(path: uri),
+  //         statusCode: 500,
+  //         statusMessage: "Connection error: ${e.message}",
+  //       );
+  //     }
+  //   } catch (e) {
+  //     print("Unexpected error on api_client.dart: $e");
+  //     return Response(
+  //       requestOptions: RequestOptions(path: uri),
+  //       statusCode: 500,
+  //       statusMessage: "Unexpected error occurred",
+  //     );
+  //   }
+  // }
 
   Future<Response> postData(String uri, Map<String, dynamic> data) async {
     try {
-      Response response = await _dio.post(uri, data: data);
-      return response;
-    } catch (e) {
-      print("POST request failed: $e");
-      return Response(
-        requestOptions: RequestOptions(path: uri),
-        statusCode: 500,
-        statusMessage: "Internal Server Error",
-      );
-    }
-  }
+          print("Attempting POST to: $uri");
+          print("With data: $data");
+          Response response = await _dio.post(uri, data: data);
+          print("Response received: ${response.statusCode}");
+          return response;
+        } on DioException catch (e) {
+          print("POST request failed on api_client.dart: ${e.type} - ${e.message}");
+          print("Request data was: ${e.requestOptions.data}");
+          if (e.response != null) {
+            return e.response!;
+          } else {
+            return Response(
+              requestOptions: RequestOptions(path: uri),
+              statusCode: 500,
+              statusMessage: "Connection error: ${e.message}",
+            );
+          }
+        } catch (e) {
+          print("Unexpected error: $e");
+          return Response(
+            requestOptions: RequestOptions(path: uri),
+            statusCode: 500,
+            statusMessage: "Unexpected error occurred",
+          );
+        }
+      }
 }

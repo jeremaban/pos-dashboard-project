@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/product_controller.dart';
 import 'package:pos_dashboard/core/utils/app_constants.dart';
 
@@ -14,7 +15,7 @@ class ItemsList extends StatefulWidget {
 }
 
 class _ItemsListState extends State<ItemsList>{
-    final PopularProductController popularProductController = Get.find<PopularProductController>();
+    final ItemController itemController = Get.find<ItemController>();
 
     @override
     void initState() {
@@ -23,28 +24,28 @@ class _ItemsListState extends State<ItemsList>{
     }
 
     void _loadData() async {
-      await popularProductController.getPopularProductList();
+      await itemController.getItemList();
     }
 
     List<dynamic> getItems() {
-      if(popularProductController.popularProductList.isEmpty) {
+      if(itemController.itemList.isEmpty) {
         return [];
       }
 
       switch (widget.listType) {
         case 'critical_level':
-        return popularProductController.popularProductList.where(
-          (item) => item.stars > 0 && item.stars < 5
+        return itemController.itemList.where(
+          (item) => item.currentStock > 0 && item.currentStock < 5
           ).toList();
 
         case 'out_of_stock':
-        return popularProductController.popularProductList.where(
-          (item) => item.stars == 0
+        return itemController.itemList.where(
+          (item) => item.currentStock == 0
           ).toList();
         
         case 'inventory':
         default:
-          return popularProductController.popularProductList;
+          return itemController.itemList;
       }
     }
 
@@ -65,7 +66,7 @@ class _ItemsListState extends State<ItemsList>{
 
               String stockStatus;
               Color stockColor;
-              int stock = item.stars;
+              int stock = item.currentStock;
 
               if (stock == 0) {
                 stockStatus = "Out of Stock";
@@ -80,7 +81,7 @@ class _ItemsListState extends State<ItemsList>{
 
               return ListTile(
                 leading: Image.network(
-                  "${AppConstants.BASE_URL}${AppConstants.UPLOAD_URL}${item.img}",
+                  "${AppConstants.BASE_URL}${item.imgUrl}",
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -94,7 +95,7 @@ class _ItemsListState extends State<ItemsList>{
                   errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.image_not_supported),
                 ),
-                  title: Text(item.name),
+                  title: Text(item.itemName),
                   subtitle: Text(
                     stockStatus,
                     style: TextStyle(color: stockColor),

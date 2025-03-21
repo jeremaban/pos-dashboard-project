@@ -8,7 +8,15 @@ class PopularProductRepo extends GetxService {
 
   PopularProductRepo({required this.apiClient});
 
-  Future<dio.Response> getPopularProductList() async {
-    return await apiClient.getData(AppConstants.PRODUCT_URI);
+
+  Map<String, dynamic> body = {
+    "StoreId": 1, //NEED TO BE DYNAMIC DEPENDING ON STORE LOGGING IN
+    "POSId": 2,
+    "RecordsPerPage": 3,
+    "OffSet": 4
+  };
+
+  Future<dio.Response> getItemList() async {
+    return await apiClient.postData(AppConstants.PRODUCT_URI, body);
   }
 }

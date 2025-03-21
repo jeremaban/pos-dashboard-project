@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/dependencies.dart' as dep;
+import 'package:pos_dashboard/data/repositories/item_repo.dart';
+import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/product_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
 import 'package:pos_dashboard/data/repositories/product_repo.dart'; 
@@ -15,9 +17,9 @@ Future<void> main() async {
 
   Get.put<ApiClient>(ApiClient(baseUrl: AppConstants.BASE_URL));
 
-  Get.put<PopularProductRepo>(PopularProductRepo(apiClient: Get.find()));
-  Get.put<PopularProductController>(
-      PopularProductController(popularProductRepo: Get.find()));
+  Get.put<ItemRepo>(ItemRepo(apiClient: Get.find()));
+  Get.put<ItemController>(
+      ItemController(itemRepo: Get.find()));
 
   Get.put<LoginRepository>(LoginRepository(apiClient: Get.find()));
   Get.put<LoginController>(LoginController(loginRepository: Get.find()));
@@ -35,7 +37,7 @@ class PosDashboardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const LoginScreen(),
       initialBinding: BindingsBuilder(() {
-        Get.find<PopularProductController>().getPopularProductList();
+        Get.find<ItemController>().getItemList();
       }),
     );
   }

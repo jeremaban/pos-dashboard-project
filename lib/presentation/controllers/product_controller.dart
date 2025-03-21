@@ -15,7 +15,7 @@ class PopularProductController extends GetxController{
   List<dynamic> get popularProductList => _popularProductList;
 
   Future<void> getPopularProductList() async{
-    dio.Response response = await popularProductRepo.getPopularProductList();
+    dio.Response response = await popularProductRepo.getItemList();
 
     if(response.statusCode == 200){ //200 means success
       print("got data");

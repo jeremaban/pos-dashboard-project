@@ -22,7 +22,9 @@ class ApiClient {
     Map<String, dynamic>? queryParams,
   }) async {
     try {
-      Response response = await _dio.get(uri, queryParameters: queryParams);
+      Response response = await _dio.get(
+        uri, 
+        queryParameters: queryParams);
       return response;
     } on DioException catch (e) {
       print("GET request failed on api_client.dart: ${e.type} - ${e.message}");
@@ -45,12 +47,18 @@ class ApiClient {
     }
   }
 
-  Future<Response> postFormData(String uri, Map<String, dynamic> data) async {
+  Future<Response> postFormData(String uri, Map<String, dynamic> data, { String? authToken}) async {
     try {
       print("Attempting POST form data to: $uri");
       print("With data: $data");
 
       _dio.options.contentType = Headers.jsonContentType;
+
+      //FOR TOKEN
+      if (authToken != null && authToken.isNotEmpty) {
+        _dio.options.headers['Authorization'] = 'Bearer $authToken';
+      }
+
       Response response = await _dio.post(
         uri,
         data: jsonEncode(data),

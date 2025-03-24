@@ -5,6 +5,11 @@ import 'package:pos_dashboard/data/repositories/login_repo.dart';
 class LoginController extends GetxController {
   final LoginRepository loginRepository;
 
+  //RX for reactive state management, i.e. when user logs out
+  final RxString _accessToken = RxString('');
+  
+  String get accessToken => _accessToken.value;
+
   LoginController({required this.loginRepository});
 
   var isLoading = false.obs;
@@ -21,7 +26,7 @@ class LoginController extends GetxController {
     try {
       dio.Response response = await loginRepository.login(username, password);
       if (response.statusCode == 200) {
-        String accessToken = response.data['access_token'];
+        _accessToken.value = response.data['access_token'];
         print("Login Successful: $accessToken");
         Get.offAllNamed('/dashboard');
       } else {

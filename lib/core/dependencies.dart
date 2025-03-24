@@ -10,7 +10,10 @@ import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
 Future<void> init() async {
   Get.lazyPut(() => Dio(BaseOptions(baseUrl: AppConstants.BASE_URL)));
 
-  Get.lazyPut(() => ItemRepository(apiClient: Get.find()));
+  Get.lazyPut(() => ItemRepository(
+    apiClient: Get.find(),
+    loginController: Get.find()
+    ));
   Get.lazyPut(() => LoginRepository(dio: Get.find()));
 
   Get.lazyPut(() => ItemController(itemRepository: Get.find()));

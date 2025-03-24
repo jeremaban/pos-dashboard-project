@@ -20,7 +20,10 @@ Future<void> main() async {
 
     Get.put<Dio>(Dio(BaseOptions(baseUrl: AppConstants.BASE_URL)));
 
-    Get.put<ItemRepository>(ItemRepository(apiClient: Get.find()));
+    Get.put<ItemRepository>(ItemRepository(
+      apiClient: Get.find(),
+      loginController: Get.find()
+      ));
     Get.put<LoginRepository>(LoginRepository(dio: Get.find()));
 
     Get.put<ItemController>(ItemController(itemRepository: Get.find()));

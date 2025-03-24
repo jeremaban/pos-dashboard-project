@@ -1,15 +1,13 @@
 class LoginModel {
-  final bool success;
-  final String token;
-  final String message;
+  final String accessToken;
 
-  LoginModel({required this.success, required this.token, required this.message});
+  LoginModel({required this.accessToken});
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
-    return LoginModel(
-      success: json["success"],
-      token: json["token"] ?? "",
-      message: json["message"] ?? "",
-    );
+    if (json == null || json['access_token'] == null) {
+      throw FormatException('Failed to load access token from JSON: $json');
+    }
+
+    return LoginModel(accessToken: json['access_token']);
   }
 }

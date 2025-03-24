@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
-import 'package:pos_dashboard/presentation/controllers/product_controller.dart';
+import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/core/utils/app_constants.dart';
 import 'items_widget.dart';
+import 'package:pos_dashboard/data/models/items_model.dart'; 
 
 class ItemsSection extends StatelessWidget {
   const ItemsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final PopularProductController productController = Get.find<PopularProductController>();
+    final ItemController itemController = Get.find<ItemController>();
 
     return Container(
       padding: EdgeInsets.all(Dimensions.width16),
@@ -39,16 +40,14 @@ class ItemsSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: Dimensions.height10),
-
-          GetBuilder<PopularProductController>(
+          GetBuilder<ItemController>(
             builder: (controller) {
-              if (controller.popularProductList.isEmpty) {
+              if (controller.itemList.isEmpty) {
                 return const Center(child: Text("No items found"));
               }
 
-              List<dynamic> topItems = List.from(controller.popularProductList)
-                ..sort((a, b) => (b.stars ?? 0).compareTo(a.stars ?? 0));
-
+              List<Items> topItems = List.from(controller.itemList);
+              topItems.sort((a, b) => (b.currentStock ?? 0).compareTo(a.currentStock ?? 0));
               topItems = topItems.take(3).toList();
 
               return ListView.separated(
@@ -62,15 +61,14 @@ class ItemsSection extends StatelessWidget {
                 itemBuilder: (context, index) {
                   var item = topItems[index];
 
-                  String itemName = item.name ?? "Unknown Item";
+                  String itemName = item.itemName ?? "Unknown Item";
                   if (itemName.length > 20) {
                     itemName = '${itemName.substring(0, 20)}...';
                   }
 
-                  int quantity = item.stars?.toInt() ?? 0;
+                  int quantity = item.currentStock ?? 0;
 
-                  // Ensure the image URL is complete
-                  String imageUrl = "${AppConstants.BASE_URL}${AppConstants.UPLOAD_URL}${item.img}";
+                  String imageUrl = "${AppConstants.BASE_URL}${item.imgUrl}";
 
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: Dimensions.height8),

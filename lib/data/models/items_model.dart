@@ -36,32 +36,33 @@ class Items {
   int? categoryId;
   String? itemName;
   int? combiName;
-  int? price;
+  double? price;
   int? currentStock;
   String? imgUrl;
   int? storeId;
 
-  Items(
-      {this.itemId,
-      this.sKUId,
-      this.categoryId,
-      this.itemName,
-      this.combiName,
-      this.price,
-      this.currentStock,
-      this.imgUrl,
-      this.storeId});
+  Items({
+    this.itemId,
+    this.sKUId,
+    this.categoryId,
+    this.itemName,
+    this.combiName,
+    this.price,
+    this.currentStock,
+    this.imgUrl,
+    this.storeId,
+  });
 
   Items.fromJson(Map<String, dynamic> json) {
-    itemId = json['ItemId'];
-    sKUId = json['SKUId'];
-    categoryId = json['CategoryId'];
+    itemId = json['ItemId'] is double ? json['ItemId'].toInt() : json['ItemId'];
+    sKUId = json['SKUId'] is double ? json['SKUId'].toInt() : json['SKUId'];
+    categoryId = json['CategoryId'] is double ? json['CategoryId'].toInt() : json['CategoryId'];
     itemName = json['ItemName'];
     combiName = json['CombiName'];
     price = json['Price'];
-    currentStock = json['CurrentStock'];
+    currentStock = json['CurrentStock'] is double ? json['CurrentStock'].toInt() : json['CurrentStock'];
     imgUrl = json['ImgUrl'];
-    storeId = json['StoreId'];
+    storeId = json['StoreId'] is double ? json['StoreId'].toInt() : json['StoreId'];
   }
 }
 

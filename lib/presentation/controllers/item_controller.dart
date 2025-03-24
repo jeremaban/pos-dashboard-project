@@ -4,25 +4,32 @@ import 'package:pos_dashboard/data/models/items_model.dart';
 import 'package:pos_dashboard/data/repositories/item_repo.dart';
 
 class ItemController extends GetxController {
-  final ItemRepo itemRepo;
+  final ItemRepository itemRepository;
 
-  ItemController({
-    required this.itemRepo
-  });
+  ItemController({required this.itemRepository});
 
-  List<dynamic> _itemList = [];
-  List<dynamic> get itemList => _itemList;
+  List<Items> _itemList = [];
+  List<Items> get itemList => _itemList;
 
   Future<void> getItemList() async {
-    dio.Response response = await itemRepo.getItemList();
+    try {
+      dio.Response response = await itemRepository.getItemList();
 
-    if(response.statusCode == 200 || response.statusCode == 201){
-      print("Got data. Source: item_controller.dart");
-      _itemList = [];
-      _itemList.addAll(ItemModel.fromJson(response.data).items);
-      update();
-    } else {
-      print("No data. Source: item_controller.dart");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("Got data. Source: item_controller.dart");
+        ItemModel itemModel = ItemModel.fromJson(response.data);
+        _itemList = itemModel.items;
+        update();
+
+        print("Number of items loaded: ${_itemList.length}");
+        if (_itemList.isNotEmpty) {
+          print("Sample item: ${_itemList.first}");
+        }
+      } else {
+        print("No data. Source: item_controller.dart, status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching item list: $e");
     }
   }
 }

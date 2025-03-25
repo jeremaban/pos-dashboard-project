@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/core/utils/app_constants.dart';
+import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
 import 'items_widget.dart';
 import 'package:pos_dashboard/data/models/items_model.dart'; 
 
@@ -11,6 +12,7 @@ class ItemsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final ThemeController themeController = Get.find();
     final ItemController itemController = Get.find<ItemController>();
 
     return Container(

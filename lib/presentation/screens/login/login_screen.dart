@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
+import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -12,6 +13,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final ThemeController themeController = Get.find();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign In', style: TextStyle(color: Colors.white)),

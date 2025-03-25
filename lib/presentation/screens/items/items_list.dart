@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/core/utils/app_constants.dart';
 import 'package:pos_dashboard/data/models/items_model.dart'; // Import the Items model
@@ -79,8 +80,8 @@ class _ItemsListState extends State<ItemsList> {
                   return ListTile(
                     leading: Image.network(
                       "${AppConstants.BASE_URL}${item.imgUrl}",
-                      width: 100,
-                      height: 100,
+                      width: Dimensions.height50,
+                      height: Dimensions.height50,
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) {

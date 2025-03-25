@@ -63,6 +63,7 @@ class ApiClient {
         uri,
         data: jsonEncode(data),
       );
+      
       print("Response received: ${response.statusCode}");
       return response;
     } on DioException catch (e) {

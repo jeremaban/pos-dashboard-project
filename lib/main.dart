@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:pos_dashboard/core/dependencies.dart' as dep;
 import 'package:pos_dashboard/data/repositories/item_repo.dart';
+import 'package:pos_dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
 import 'package:pos_dashboard/data/repositories/login_repo.dart';
@@ -10,11 +11,14 @@ import 'package:pos_dashboard/presentation/screens/login/login_screen.dart';
 import 'package:pos_dashboard/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:pos_dashboard/core/utils/app_constants.dart';
 import 'package:pos_dashboard/core/api/api_client.dart';
+import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await dep.init();
+
+    Get.put(ThemeController());
 
     Get.put<ApiClient>(ApiClient(baseUrl: AppConstants.BASE_URL));
 
@@ -24,6 +28,7 @@ Future<void> main() async {
       apiClient: Get.find(),
       loginController: Get.find()
       ));
+
     Get.put<LoginRepository>(LoginRepository(dio: Get.find()));
 
     Get.put<ItemController>(ItemController(itemRepository: Get.find()));
@@ -43,12 +48,29 @@ class PosDashboardApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.light, 
       initialRoute: "/",
       getPages: [
         GetPage(name: "/", page: () => LoginScreen()),
-        GetPage(name: "/dashboard", page: () => const DashboardScreen()),
+        GetPage(
+          name: "/dashboard", 
+          page: () => const DashboardScreen(),
+          binding: DashboardBinding()
+        ),
       ],
     );
+  }
+}
+
+class DashboardBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut(() => DashboardController(
+      itemRepository: Get.find(), 
+      loginController: Get.find()
+    ));
   }
 }
 

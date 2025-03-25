@@ -29,6 +29,7 @@ class ItemRepository extends GetxService {
     return await apiClient.postFormData(
       AppConstants.PRODUCT_URI, 
       body,
-      authToken: accessToken);
+      authToken: accessToken
+    );
   }
 }

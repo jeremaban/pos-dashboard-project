@@ -12,18 +12,18 @@ class ItemsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        final ThemeController themeController = Get.find();
+    final ThemeController themeController = Get.find();
     final ItemController itemController = Get.find<ItemController>();
 
     return Container(
       padding: EdgeInsets.all(Dimensions.width16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(Dimensions.height12),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 6,
+            blurRadius: Dimensions.height6,
             offset: Offset(0, 3),
           ),
         ],
@@ -68,7 +68,7 @@ class ItemsSection extends StatelessWidget {
                     itemName = '${itemName.substring(0, 20)}...';
                   }
 
-                  int quantity = item.currentStock ?? 0;
+                  double quantity = item.price ?? 0;
 
                   String imageUrl = "${AppConstants.BASE_URL}${item.imgUrl}";
 

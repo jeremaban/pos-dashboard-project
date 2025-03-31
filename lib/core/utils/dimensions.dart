@@ -6,6 +6,7 @@ class Dimensions {
   static double screenWidth = Get.context!.width; //500
 
   //height
+  static double height6 = screenHeight / 129.73333740234375;
   static double height8 = screenHeight / 97.30000305175781;
   static double height10 = screenHeight / 75.44000244140625;
   static double height12 = screenHeight / 64.86666870117188;

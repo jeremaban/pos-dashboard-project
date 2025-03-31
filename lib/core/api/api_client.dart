@@ -65,6 +65,8 @@ class ApiClient {
       );
       
       print("Response received: ${response.statusCode}");
+
+      print("Response data: ${jsonEncode(response.data)}");
       return response;
     } on DioException catch (e) {
       print("POST request failed on api_client.dart: ${e.type} - ${e.message}");

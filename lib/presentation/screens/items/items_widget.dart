@@ -3,7 +3,7 @@ import 'package:pos_dashboard/core/utils/dimensions.dart';
 
 class ItemsWidget extends StatelessWidget {
   final String itemName;
-  final int quantity;
+  final double quantity;
   final Widget itemImage;
 
   const ItemsWidget({

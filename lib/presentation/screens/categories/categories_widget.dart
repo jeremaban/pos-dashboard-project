@@ -3,14 +3,12 @@ import 'package:pos_dashboard/core/utils/dimensions.dart';
 
 class CategoriesWidget extends StatelessWidget {
   final String categoryName;
-  final double netSales;
-  final Color circleColor;
+  final double totalSales;
 
   const CategoriesWidget({
     super.key, 
-    required this.netSales, 
     required this.categoryName, 
-    required this.circleColor
+    required this.totalSales, 
   });
 
   @override
@@ -22,10 +20,17 @@ class CategoriesWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                backgroundColor: circleColor,
-                radius: Dimensions.radius15,
-              ),
+              // CircleAvatar(
+              //   radius: Dimensions.radius15,
+              //   backgroundColor: Colors.grey[200],
+              //   child: ClipOval(
+              //     child: SizedBox(
+              //       width: 30,
+              //       height: 30,
+              //       child: categoryImage,
+              //     ),
+              //   ),
+              // ),
               SizedBox(width: Dimensions.width10),
               Text(
                 categoryName,
@@ -34,11 +39,11 @@ class CategoriesWidget extends StatelessWidget {
             ],
           ),
           Text(
-            netSales.toStringAsFixed(2),
+            totalSales.toString(),
             style: TextStyle(fontSize: Dimensions.font16),
           ),
         ],
-      )
+      ),
     );
   }
 }

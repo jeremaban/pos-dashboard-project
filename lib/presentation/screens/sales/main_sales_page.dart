@@ -22,6 +22,7 @@ class _MainSalesPage extends State<MainSalesPage> {
   ];
   final List<double> netSales = [200, 350, 500];
 
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

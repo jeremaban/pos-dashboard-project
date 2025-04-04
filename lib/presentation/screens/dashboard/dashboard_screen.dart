@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/data/repositories/item_repo.dart';
 import 'package:pos_dashboard/presentation/controllers/dashboard_controller.dart';
+import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
 import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
 import '../sales/main_sales_page.dart';
@@ -88,6 +89,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final ThemeController themeController = Get.find();
     return GetBuilder<DashboardController>(
       builder: (controller) {
+        print("Dashboard_Screen.dart loaded.");
         return Scaffold(
           body: controller.isInitialized
             ? _buildDashboard()

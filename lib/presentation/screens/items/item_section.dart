@@ -1,19 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
-import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
-import 'package:pos_dashboard/core/utils/app_constants.dart';
+import 'package:pos_dashboard/data/models/top_dashboard_model.dart';
+import 'package:pos_dashboard/presentation/controllers/top_dashboard_controller.dart';
+import 'package:pos_dashboard/presentation/screens/sales/main_sales_widget.dart';
 import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
-import 'items_widget.dart';
-import 'package:pos_dashboard/data/models/items_model.dart'; 
 
-class ItemsSection extends StatelessWidget {
+class ItemsSection extends StatefulWidget {
   const ItemsSection({super.key});
+
+  @override
+  _ItemsSectionState createState() => _ItemsSectionState();
+}
+
+class _ItemsSectionState extends State<ItemsSection> {
+  final TopDashboardController topDashboardController =
+      Get.find<TopDashboardController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() async {
+    await topDashboardController.getTopList();
+  }
+
+  List<Top5Items> getItems() {
+    if (topDashboardController.top5ItemsList.isEmpty) {
+      return [];
+    }
+
+    return topDashboardController.top5ItemsList;
+  }
 
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find();
-    final ItemController itemController = Get.find<ItemController>();
 
     return Container(
       padding: EdgeInsets.all(Dimensions.width16),
@@ -42,24 +66,26 @@ class ItemsSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: Dimensions.height10),
-          GetBuilder<ItemController>(
+          GetBuilder<TopDashboardController>(
             builder: (controller) {
-              if (controller.itemList.isEmpty) {
+              List<Top5Items> items = getItems();
+              if (controller.top5ItemsList.isEmpty) {
                 return const Center(child: Text("No items found"));
               }
 
-              List<Items> topItems = List.from(controller.itemList);
-              topItems.sort((a, b) => (b.currentStock ?? 0).compareTo(a.currentStock ?? 0));
+              List<Top5Items> topItems = List.from(controller.top5ItemsList);
+              topItems.sort(
+                (a, b) => (b.grossSales ?? 0).compareTo(a.grossSales ?? 0),
+              );
               topItems = topItems.take(3).toList();
 
               return ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: topItems.length,
-                separatorBuilder: (context, index) => Divider(
-                  color: Colors.grey.shade300,
-                  thickness: 1,
-                ),
+                separatorBuilder:
+                    (context, index) =>
+                        Divider(color: Colors.grey.shade300, thickness: 1),
                 itemBuilder: (context, index) {
                   var item = topItems[index];
 
@@ -68,22 +94,22 @@ class ItemsSection extends StatelessWidget {
                     itemName = '${itemName.substring(0, 20)}...';
                   }
 
-                  double quantity = item.price ?? 0;
-
-                  String imageUrl = "${AppConstants.BASE_URL}${item.imgUrl}";
+                  double quantity = item.grossSales ?? 0;
 
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: Dimensions.height8),
-                    child: ItemsWidget(
+                    child: MainSalesWidget(
                       itemName: itemName,
                       quantity: quantity,
                       itemImage: Image.network(
-                        imageUrl,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.image_not_supported),
+                        "Icons.image_not_supported",
+                        width: Dimensions.width60,
+                        height: Dimensions.height60,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.image_not_supported,
+                          );
+                        },
                       ),
                     ),
                   );

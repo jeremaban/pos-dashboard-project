@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:pos_dashboard/core/dependencies.dart' as dep;
 import 'package:pos_dashboard/data/repositories/item_repo.dart';
+import 'package:pos_dashboard/data/repositories/top_dashboard_repo.dart';
 import 'package:pos_dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
 import 'package:pos_dashboard/data/repositories/login_repo.dart';
+import 'package:pos_dashboard/presentation/controllers/top_dashboard_controller.dart';
 import 'package:pos_dashboard/presentation/screens/login/login_screen.dart';
 import 'package:pos_dashboard/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:pos_dashboard/core/utils/app_constants.dart';
@@ -24,14 +26,24 @@ Future<void> main() async {
 
     Get.put<Dio>(Dio(BaseOptions(baseUrl: AppConstants.BASE_URL)));
 
-    Get.put<ItemRepository>(ItemRepository(
-      apiClient: Get.find(),
-      loginController: Get.find()
-      ));
+    Get.put<ItemRepository>(
+      ItemRepository(apiClient: Get.find(), loginController: Get.find()),
+    );
+
+    Get.put<TopDashboardRepo>(
+      TopDashboardRepo(apiClient: Get.find(), loginController: Get.find()),
+    );
 
     Get.put<LoginRepository>(LoginRepository(dio: Get.find()));
 
-    Get.put<ItemController>(ItemController(itemRepository: Get.find()));
+    Get.put<ItemController>(
+      ItemController(itemRepository: Get.find())
+    );
+
+    Get.put<TopDashboardController>(
+      TopDashboardController(topDashboardRepo: Get.find()),
+    );
+
     Get.put<LoginController>(LoginController(loginRepository: Get.find()));
 
     runApp(const PosDashboardApp());
@@ -50,14 +62,14 @@ class PosDashboardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.light, 
+      themeMode: ThemeMode.light,
       initialRoute: "/",
       getPages: [
         GetPage(name: "/", page: () => LoginScreen()),
         GetPage(
-          name: "/dashboard", 
+          name: "/dashboard",
           page: () => const DashboardScreen(),
-          binding: DashboardBinding()
+          binding: DashboardBinding(),
         ),
       ],
     );
@@ -67,10 +79,12 @@ class PosDashboardApp extends StatelessWidget {
 class DashboardBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => DashboardController(
-      itemRepository: Get.find(), 
-      loginController: Get.find()
-    ));
+    Get.lazyPut(
+      () => DashboardController(
+        itemRepository: Get.find(),
+        loginController: Get.find(),
+      ),
+    );
   }
 }
 
@@ -82,11 +96,7 @@ class ErrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Error: $errorMessage'),
-        ),
-      ),
+      home: Scaffold(body: Center(child: Text('Error: $errorMessage'))),
     );
   }
 }

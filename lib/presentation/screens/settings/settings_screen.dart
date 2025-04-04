@@ -50,8 +50,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('App Settings'),
-                  SizedBox(height: Dimensions.height16),
                   Obx(() => SwitchListTile(
                     title: Text('Dark Mode'),
                     value: themeController.isDarkMode, 

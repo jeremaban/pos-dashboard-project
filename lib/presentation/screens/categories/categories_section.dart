@@ -1,18 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pos_dashboard/core/utils/app_constants.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
-import 'package:pos_dashboard/data/models/items_model.dart';
-import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
-import 'package:pos_dashboard/presentation/screens/categories/categories_widget.dart';
-import 'package:pos_dashboard/presentation/screens/items/items_widget.dart';
+import 'package:pos_dashboard/data/models/top_dashboard_model.dart';
+import 'package:pos_dashboard/presentation/controllers/top_dashboard_controller.dart';
+import 'package:pos_dashboard/presentation/screens/sales/main_sales_widget.dart';
+import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
 
-class CategoriesSection extends StatelessWidget {
+class CategoriesSection extends StatefulWidget {
   const CategoriesSection({super.key});
 
   @override
+  _CategoriesSectionState createState() => _CategoriesSectionState();
+}
+
+class _CategoriesSectionState extends State<CategoriesSection> {
+  final TopDashboardController topDashboardController =
+    Get.find<TopDashboardController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() async {
+    await topDashboardController.getTopList();
+  }
+
+  List<Top5Categories> getCategories() {
+    if (topDashboardController.top5CategoriesList.isEmpty) {
+      return [];
+    }
+
+    return topDashboardController.top5CategoriesList;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ItemController itemController = Get.find<ItemController>();
+    final ThemeController themeController = Get.find();
 
     return Container(
       padding: EdgeInsets.all(Dimensions.width16),
@@ -41,71 +66,52 @@ class CategoriesSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: Dimensions.height10),
-          GetBuilder<ItemController>(
+          GetBuilder<TopDashboardController>(
             builder: (controller) {
-              if (controller.categoryList.isEmpty) {
+              List<Top5Categories> categories = getCategories();
+              if (controller.top5CategoriesList.isEmpty) {
                 return const Center(child: Text("No categories found"));
               }
 
-              Map<Categories, double> categoryPriceMap = {};
-
-              for (var category in controller.categoryList) {
-                List<Items> categoryItems = controller.itemList
-                    .where((item) => item.categoryId == category.id)
-                    .toList();
-
-                double totalPrice = 0;
-                for (var item in categoryItems) {
-                  //PRICE FOR UI, CHANGE TO SALES LATER
-                  totalPrice += item.price ?? 0;
-                }
-
-                categoryPriceMap[category] = totalPrice;
-              }
+              List<Top5Categories> topCategories = List.from(controller.top5CategoriesList);
+              topCategories.sort(
+                (a, b) => (b.grossSales ?? 0).compareTo(a.grossSales ?? 0),
+              );
+              topCategories = topCategories.take(3).toList();
 
               return ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.categoryList.length,
+                itemCount: topCategories.length,
                 separatorBuilder: (context, index) => Divider(
                   color: Colors.grey.shade300,
                   thickness: 1,
                 ),
                 itemBuilder: (context, index) {
-                  var category = controller.categoryList[index];
-                  double totalPrice = categoryPriceMap[category] ?? 0;
+                  var category = topCategories[index];
+
+                  String categoryName = category.categoryName ?? "Unknown Item";
+                  if (categoryName.length > 20) {
+                    categoryName = '${categoryName.substring(0, 20)}...';
+                  }
+
+                  double quantity = category.grossSales ?? 0;
 
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: Dimensions.height8),
-                    child: CategoriesWidget(
-                      categoryName: category.categoryName ?? "Unknwon Category", 
-                      totalSales: totalPrice, 
-                      ),
+                    child: MainSalesWidget(
+                      itemName: categoryName,
+                      quantity: quantity,
+                      // itemImage: Image.network(
+                      //   imageUrl,
+                      //   width: 60,
+                      //   height: 60,
+                      //   fit: BoxFit.cover,
+                      //   errorBuilder: (context, error, stackTrace) =>
+                      //       const Icon(Icons.image_not_supported),
+                      // ),
+                    ),
                   );
-
-                  // String itemName = item.itemName ?? "Unknown Item";
-                  // if (itemName.length > 20) {
-                  //   itemName = '${itemName.substring(0, 20)}...';
-                  // }
-
-                  // int quantity = item.currentStock ?? 0;
-                  // String imageUrl = "${AppConstants.BASE_URL}${item.imgUrl}";
-
-                  // return Padding(
-                  //   padding: EdgeInsets.symmetric(vertical: Dimensions.height8),
-                  //   child: ItemsWidget(
-                  //     itemName: itemName,
-                  //     quantity: quantity,
-                  //     itemImage: Image.network(
-                  //       imageUrl,
-                  //       width: 60,
-                  //       height: 60,
-                  //       fit: BoxFit.cover,
-                  //       errorBuilder: (context, error, stackTrace) =>
-                  //           const Icon(Icons.image_not_supported),
-                  //     ),
-                  //   ),
-                  // );
                 },
               );
             },

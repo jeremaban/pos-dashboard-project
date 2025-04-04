@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pos_dashboard/presentation/screens/login/login_screen.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
+import 'package:pos_dashboard/presentation/screens/settings/terms_webview_screen.dart';
 
 class ThemeController extends GetxController {
   final _storage = GetStorage();
@@ -73,8 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             title: Text('Terms and Conditions'),
                             content: SingleChildScrollView(
                               child: Text(
-                                'Test for Terms and Conditions.\n\n'
-                                'Add terms and conditions here.'
+                                'You will be redirected to our page containing the terms and conditions in your browser.'
                               )
                             ),
                             actions: [
@@ -84,41 +84,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 },
                                 child: Text('Close'),
                               ),
-                            ],
-                          );
-                        },
-                        );
-                    },
-                    child: Text('Terms and Conditions')),
-                  SizedBox(width: Dimensions.width10),
-                  Icon(Icons.circle, size: Dimensions.iconSize5, color: Colors.grey),
-                  SizedBox(width: Dimensions.width10),
-                  InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context, 
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Privacy Policy'),
-                            content: SingleChildScrollView(
-                              child: Text(
-                                'Test for Privacy Policy.\n\n'
-                                'Add policy here.'
-                              )
-                            ),
-                            actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TermsWebviewScreen(
+                                        url: 'https://www.sellercenter.shoppazing.com/home/terms',
+                                        ),
+                                    ),
+                                  );
                                 },
-                                child: Text('Close'),
-                              ),
+                                child: Text('View Full Terms'),
+                              )
                             ],
                           );
                         },
                         );
                     },
-                    child: Text('Privacy Policy')),
+                    child: Text('Terms and Conditions'))
                 ],
               ),
             )

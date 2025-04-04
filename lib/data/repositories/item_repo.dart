@@ -26,7 +26,7 @@ class ItemRepository extends GetxService {
     //TOKEN FROM THE LOGIN
     String accessToken = loginController.accessToken;
 
-    return await apiClient.postFormData(
+    return await apiClient.postData(
       AppConstants.PRODUCT_URI, 
       body,
       authToken: accessToken

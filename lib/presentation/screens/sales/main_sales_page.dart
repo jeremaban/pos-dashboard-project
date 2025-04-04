@@ -15,13 +15,6 @@ class MainSalesPage extends StatefulWidget {
 
 class _MainSalesPage extends State<MainSalesPage> {
   DateTime selectedDate = DateTime.now();
-  final List<DateTime> dates = [
-    DateTime.now().subtract(const Duration(days: 2)),
-    DateTime.now().subtract(const Duration(days: 1)),
-    DateTime.now(),
-  ];
-  final List<double> netSales = [200, 350, 500];
-
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +32,13 @@ class _MainSalesPage extends State<MainSalesPage> {
             },
           ),
           SizedBox(height: Dimensions.height20),
-          ChartSection(dates: dates, netSales: netSales),
+          const ChartSection(),
           SizedBox(height: Dimensions.height20),
-          ItemsSection(),
+          const ItemsSection(),
           SizedBox(height: Dimensions.height20),
-          CategoriesSection(),
+          const CategoriesSection(),
           SizedBox(height: Dimensions.height20),
-          EmployeesSection(),
+          const EmployeesSection(),
         ],
       ),
     );

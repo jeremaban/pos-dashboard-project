@@ -8,6 +8,9 @@ class TopDashboardController extends GetxController {
 
   TopDashboardController({required this.topDashboardRepo});
 
+  TopDashboardModel? _topDashboardModel;
+  TopDashboardModel? get topDashboardModel => _topDashboardModel;
+
   List<Top5Categories> _top5CategoriesList = [];
   List<Top5Categories> get top5CategoriesList => _top5CategoriesList;
 
@@ -17,23 +20,52 @@ class TopDashboardController extends GetxController {
   List<Top5Items> _top5ItemsList = [];
   List<Top5Items> get top5ItemsList => _top5ItemsList;
 
+  String? _barchartPerHour;
+  String? get barchartPerHour => _barchartPerHour;
+
+  List<double> _hourlySales = List.filled(24, 0.0);
+  List<double> get hourlySales => _hourlySales;
+
+  // Sample daily sales data - Replace this with actual API data
+  List<double> _dailySales = [4800, 6700, 4300, 4500, 5500, 3000, 5500];
+  List<double> get dailySales => _dailySales;
+
   Future<void> getTopList() async {
     try {
       dio.Response response = await topDashboardRepo.getTopList();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Got data. Source: top_dashboard_controller.dart");
-        TopDashboardModel topDashboardModel = TopDashboardModel.fromJson(response.data);
+        _topDashboardModel = TopDashboardModel.fromJson(response.data);
 
-        _top5CategoriesList = topDashboardModel.top5Categories;
-        _top5EmployeesList = topDashboardModel.top5Employees;
-        _top5ItemsList = topDashboardModel.top5Items;
-        
+        _top5CategoriesList = _topDashboardModel!.top5Categories;
+        _top5EmployeesList = _topDashboardModel!.top5Employees;
+        _top5ItemsList = _topDashboardModel!.top5Items;
+        _barchartPerHour = _topDashboardModel!.barchartPerHour;
+
+        // Parse the barchartPerHour string into hourly sales data
+        if (_barchartPerHour != null) {
+          try {
+            List<String> hourlyData = _barchartPerHour!.split(',');
+            for (int i = 0; i < hourlyData.length && i < 24; i++) {
+              _hourlySales[i] = double.tryParse(hourlyData[i]) ?? 0.0;
+            }
+          } catch (e) {
+            print("Error parsing barchartPerHour data: $e");
+          }
+        }
+
+        // TODO: Add API call for daily sales data
+        // For now, using sample data
+
         update();
 
-        print("Number of top 5 categories loaded: ${_top5CategoriesList.length}");
+        print(
+          "Number of top 5 categories loaded: ${_top5CategoriesList.length}",
+        );
         print("Number of top 5 employees loaded: ${_top5EmployeesList.length}");
         print("Number of top 5 items loaded: ${_top5ItemsList.length}");
+        print("Bar chart data loaded: ${_hourlySales.length} hours");
 
         if (_top5CategoriesList.isNotEmpty) {
           print("Sample top category: ${_top5CategoriesList.first}");
@@ -47,10 +79,12 @@ class TopDashboardController extends GetxController {
           print("Sample top item: ${_top5ItemsList.first}");
         }
       } else {
-        print("No data. Source: top_dashboard_controller.dart, status code: ${response.statusCode}");
+        print(
+          "No data. Source: top_dashboard_controller.dart, status code: ${response.statusCode}",
+        );
       }
     } catch (e) {
-      print("Error fetching top list: $e");
+      print("Error in getTopList: $e");
     }
   }
 }

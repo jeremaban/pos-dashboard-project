@@ -45,7 +45,7 @@ class ApiClient {
     }
   }
 
-  Future<Response> postFormData(
+  Future<Response> postData(
     String uri,
     Map<String, dynamic> data, {
     String? authToken,

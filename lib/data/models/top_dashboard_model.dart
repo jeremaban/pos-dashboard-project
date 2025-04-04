@@ -11,34 +11,33 @@ class TopDashboardModel {
   double? grossProfit;
 
   late List<Top5Categories> _top5Categories;
-  List<Top5Categories> get top5Categories=>_top5Categories;
+  List<Top5Categories> get top5Categories => _top5Categories;
 
   late List<Top5Employees> _top5Employees;
-  List<Top5Employees> get top5Employees=>_top5Employees;
+  List<Top5Employees> get top5Employees => _top5Employees;
 
   late List<Top5Items> _top5Items;
-  List<Top5Items> get top5Items=>_top5Items;
+  List<Top5Items> get top5Items => _top5Items;
 
-  TopDashboardModel(
-      {
-      this.statusCode,
-      this.message,
-      this.barchartPerHour,
-      this.salesToday,
-      this.grossSales,
-      this.receipts,
-      this.refunds,
-      this.discounts,
-      this.costOfGoods,
-      this.grossProfit,
-      required top5Categories,
-      required top5Employees,
-      required top5Items
-      }){
-        _top5Categories = top5Categories;
-        _top5Employees = top5Employees;
-        _top5Items = top5Items; 
-      }
+  TopDashboardModel({
+    this.statusCode,
+    this.message,
+    this.barchartPerHour,
+    this.salesToday,
+    this.grossSales,
+    this.receipts,
+    this.refunds,
+    this.discounts,
+    this.costOfGoods,
+    this.grossProfit,
+    required top5Categories,
+    required top5Employees,
+    required top5Items,
+  }) {
+    _top5Categories = top5Categories;
+    _top5Employees = top5Employees;
+    _top5Items = top5Items;
+  }
 
   TopDashboardModel.fromJson(Map<String, dynamic> json) {
     statusCode = json['status_code'];

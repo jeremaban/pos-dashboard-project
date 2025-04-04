@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/pos_dashboard.iml" filepath="$PROJECT_DIR$/.idea/pos_dashboard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/pos_dashboard_android.iml" filepath="$PROJECT_DIR$/android/pos_dashboard_android.iml" />
     </modules>
   </component>
 </project>

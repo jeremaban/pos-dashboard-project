@@ -17,6 +17,6 @@ class PopularProductRepo extends GetxService {
   };
 
   Future<dio.Response> getItemList() async {
-    return await apiClient.postFormData(AppConstants.PRODUCT_URI, body);
+    return await apiClient.postData(AppConstants.PRODUCT_URI, body);
   }
 }

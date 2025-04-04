@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
-import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -11,14 +10,11 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  final Color primaryColor = const Color(0xFF00308F);
+
   @override
   Widget build(BuildContext context) {
-        final ThemeController themeController = Get.find();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign In', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF00308F),
-      ),
       backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
@@ -26,70 +22,92 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset(
+                'assets/image/logo.png',
+                height: 140,
+                width: 140,
+              ),
+              const SizedBox(height: 40),
+
               TextField(
                 controller: usernameController,
                 decoration: InputDecoration(
                   labelText: 'Username',
-                  labelStyle: const TextStyle(color: Color(0xFF00308F)),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF00308F)),
+                  labelStyle: TextStyle(color: primaryColor),
+                  prefixIcon: Icon(Icons.person, color: primaryColor),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: primaryColor),
                   ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF00308F), width: 2),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: primaryColor, width: 2),
                   ),
                 ),
               ),
-              SizedBox(height: Dimensions.height10),
+              const SizedBox(height: 20),
+
               TextField(
                 controller: passwordController,
+                obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: const TextStyle(color: Color(0xFF00308F)),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF00308F)),
+                  labelStyle: TextStyle(color: primaryColor),
+                  prefixIcon: Icon(Icons.lock, color: primaryColor),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: primaryColor),
                   ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF00308F), width: 2),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: primaryColor, width: 2),
                   ),
                 ),
-                obscureText: true,
               ),
-              SizedBox(height: Dimensions.height20),
+              const SizedBox(height: 30),
+
               Obx(
                 () => SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF00308F),
-                      side: const BorderSide(color: Color(0xFF00308F)),
+                      backgroundColor: primaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     onPressed: loginController.isLoading.value
                         ? null
                         : () {
-                            loginController.login(
-                              usernameController.text,
-                              passwordController.text,
-                            ).then((_) {
+                            loginController
+                                .login(
+                                  usernameController.text,
+                                  passwordController.text,
+                                )
+                                .then((_) {
                               if (loginController.errorMessage.isNotEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(loginController.errorMessage.value),
+                                    content: Text(
+                                      loginController.errorMessage.value,
+                                    ),
+                                    backgroundColor: Colors.red,
                                   ),
                                 );
                               }
                             });
                           },
                     child: loginController.isLoading.value
-                        ? const CircularProgressIndicator()
-                        : const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Text(
-                              "Login",
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            "Login",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                   ),

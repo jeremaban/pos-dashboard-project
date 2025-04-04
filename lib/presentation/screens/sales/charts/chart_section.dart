@@ -5,18 +5,16 @@ import 'package:pos_dashboard/presentation/screens/sales/charts/gauge_chart/gaug
 import 'package:pos_dashboard/presentation/screens/sales/charts/bar_chart/bar_chart_section.dart';
 
 class ChartSection extends StatelessWidget {
-  final List<DateTime> dates;
-  final List<double> netSales;
-
-  const ChartSection({super.key, required this.dates, required this.netSales});
+  const ChartSection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const SalesDetailsPage()),
-      ),
+      onTap:
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SalesDetailsPage()),
+          ),
       child: Container(
         padding: EdgeInsets.all(Dimensions.width16),
         decoration: BoxDecoration(
@@ -44,15 +42,14 @@ class ChartSection extends StatelessWidget {
                 ),
               ),
             ),
-             SizedBox(height: Dimensions.height20),
+            SizedBox(height: Dimensions.height20),
             GaugeChartSection(),
             SizedBox(height: Dimensions.height20),
-
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: Dimensions.height10),
-                BarChartSection(dates: dates, values: netSales),
+                const BarChartSection(),
               ],
             ),
           ],

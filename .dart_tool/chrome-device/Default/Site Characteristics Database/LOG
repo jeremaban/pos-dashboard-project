@@ -1,2 +1,7 @@
-2025/04/03-14:48:21.181 3ba0 Creating DB C:\Users\danga\AppData\Local\Temp\flutter_tools.794704c4\flutter_tools_chrome_device.92be1bc3\Default\Site Characteristics Database since it was missing.
-2025/04/03-14:48:21.304 3ba0 Reusing MANIFEST C:\Users\danga\AppData\Local\Temp\flutter_tools.794704c4\flutter_tools_chrome_device.92be1bc3\Default\Site Characteristics Database/MANIFEST-000001
+2025/04/04-22:13:06.656 39e0 Reusing MANIFEST C:\Users\User\AppData\Local\Temp\flutter_tools.93244dcb\flutter_tools_chrome_device.2e381e7c\Default\Site Characteristics Database/MANIFEST-000001
+2025/04/04-22:13:06.658 39e0 Recovering log #3
+2025/04/04-22:13:06.659 39e0 Level-0 table #6: started
+2025/04/04-22:13:06.674 39e0 Level-0 table #6: 219 bytes OK
+2025/04/04-22:13:06.674 39e0 Recovering log #6
+2025/04/04-22:13:06.676 39e0 Reusing old log C:\Users\User\AppData\Local\Temp\flutter_tools.93244dcb\flutter_tools_chrome_device.2e381e7c\Default\Site Characteristics Database/000006.log 
+2025/04/04-22:13:06.684 39e0 Delete type=0 #3

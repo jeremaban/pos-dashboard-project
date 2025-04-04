@@ -24,7 +24,7 @@ class TopDashboardRepo extends GetxService {
 
     String accessToken = loginController.accessToken;
 
-    return await apiClient.postFormData(
+    return await apiClient.postData(
       AppConstants.TOP5_PRODUCT, 
       body,
       authToken: accessToken

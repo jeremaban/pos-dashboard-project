@@ -1,45 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
+import 'package:pos_dashboard/presentation/controllers/top_dashboard_controller.dart';
 import 'gauge_chart_widget.dart';
 
 class GaugeChartSection extends StatelessWidget {
   const GaugeChartSection({super.key});
 
+  double calculatePercentage(double? value, double max) {
+    if (value == null || max == 0) return 0;
+    return ((value / max) * 100).clamp(0, 100);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GaugeChartWidget(
-            title: 'Receipts',
-            percentage: 15,
-            value: 27,
-            color: Colors.orange,
-            changePercentage: 35,
-            sizeFactor: 0.8,
+    return GetBuilder<TopDashboardController>(
+      builder: (controller) {
+        final model = controller.topDashboardModel;
+
+        final maxGrossSales = model?.grossSales ?? 0.0;
+        final maxSalesToday = model?.salesToday ?? 0.0;
+
+        return Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GaugeChartWidget(
+                title: 'Receipts',
+                percentage: model?.receipts?.toDouble() ?? 0,
+                value: model?.receipts?.toDouble() ?? 0,
+                color: Colors.orange,
+                changePercentage: 35,
+                sizeFactor: 0.8,
+              ),
+              SizedBox(width: Dimensions.width20),
+              GaugeChartWidget(
+                title: 'Sales Today',
+                percentage: calculatePercentage(
+                  model?.salesToday,
+                  maxGrossSales,
+                ),
+                value: model?.salesToday ?? 0,
+                color: Colors.green,
+                changePercentage: 21,
+                sizeFactor: 0.8,
+              ),
+              SizedBox(width: Dimensions.width20),
+              GaugeChartWidget(
+                title: 'Gross Sales',
+                percentage: 100,
+                value: model?.grossSales ?? 0,
+                color: Colors.blue,
+                changePercentage: -9,
+                sizeFactor: 0.8,
+              ),
+            ],
           ),
-          SizedBox(width: Dimensions.width20),
-          GaugeChartWidget(
-            title: 'Net Sales',
-            percentage: 60,
-            value: 5309,
-            color: Colors.green,
-            changePercentage: 21,
-            sizeFactor: 0.8,
-          ),
-          SizedBox(width: Dimensions.width20),
-          GaugeChartWidget(
-            title: 'Average Sale',
-            percentage: 25,
-            value: 197,
-            color: Colors.blue,
-            changePercentage: -9,
-            sizeFactor: 0.8,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -14,6 +14,7 @@ import 'package:pos_dashboard/presentation/screens/dashboard/dashboard_screen.da
 import 'package:pos_dashboard/core/utils/app_constants.dart';
 import 'package:pos_dashboard/core/api/api_client.dart';
 import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';
+import 'package:pos_dashboard/core/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,9 +37,7 @@ Future<void> main() async {
 
     Get.put<LoginRepository>(LoginRepository(dio: Get.find()));
 
-    Get.put<ItemController>(
-      ItemController(itemRepository: Get.find())
-    );
+    Get.put<ItemController>(ItemController(itemRepository: Get.find()));
 
     Get.put<TopDashboardController>(
       TopDashboardController(topDashboardRepo: Get.find()),
@@ -60,9 +59,9 @@ class PosDashboardApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.light,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       initialRoute: "/",
       getPages: [
         GetPage(name: "/", page: () => LoginScreen()),

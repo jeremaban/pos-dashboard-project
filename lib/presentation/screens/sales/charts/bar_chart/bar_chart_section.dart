@@ -13,8 +13,9 @@ class BarChartSection extends StatefulWidget {
 class _BarChartSectionState extends State<BarChartSection> {
   final TopDashboardController topDashboardController =
       Get.find<TopDashboardController>();
-  late List<DateTime> dates;
+  late List<DateTime> visibleDates;
   late DateTime selectedDate;
+  late int currentHour;
 
   @override
   void initState() {
@@ -24,12 +25,19 @@ class _BarChartSectionState extends State<BarChartSection> {
 
   void _initializeDates() {
     selectedDate = DateTime.now();
-    dates = List.generate(24, (index) {
+    currentHour = selectedDate.hour;
+    _updateVisibleDates();
+  }
+
+  void _updateVisibleDates() {
+    // Get previous, current, and next hour
+    visibleDates = List.generate(3, (index) {
+      int hour = (currentHour - 1 + index) % 24;
       return DateTime(
         selectedDate.year,
         selectedDate.month,
         selectedDate.day,
-        index,
+        hour,
       );
     });
   }
@@ -37,24 +45,62 @@ class _BarChartSectionState extends State<BarChartSection> {
   List<double> _parseHourlyData(String? barchartData) {
     if (barchartData == null) return List.filled(24, 0.0);
     final values = barchartData.split(',');
+    if (values.length < 24) {
+      return [
+        ...values.map((v) => double.tryParse(v) ?? 0.0),
+        ...List.filled(24 - values.length, 0.0),
+      ];
+    }
     return values.map((v) => double.tryParse(v) ?? 0.0).toList();
+  }
+
+  List<double> _getVisibleValues(List<double> allValues) {
+    // Get values for previous, current, and next hour
+    return List.generate(3, (index) {
+      int hour = (currentHour - 1 + index) % 24;
+      return allValues[hour];
+    });
+  }
+
+  void _onSwipeLeft() {
+    setState(() {
+      currentHour = (currentHour + 1) % 24;
+      _updateVisibleDates();
+    });
+  }
+
+  void _onSwipeRight() {
+    setState(() {
+      currentHour = (currentHour - 1) % 24;
+      if (currentHour < 0) currentHour = 23;
+      _updateVisibleDates();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TopDashboardController>(
       builder: (controller) {
-        final hourlyValues = _parseHourlyData(controller.barchartPerHour);
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 10),
-            BarChartWidget(
-              dates: dates,
-              values: hourlyValues,
+        final allHourlyValues = _parseHourlyData(controller.barchartPerHour);
+        final visibleValues = _getVisibleValues(allHourlyValues);
+
+        return GestureDetector(
+          onHorizontalDragEnd: (details) {
+            if (details.primaryVelocity! > 0) {
+              _onSwipeRight();
+            } else if (details.primaryVelocity! < 0) {
+              _onSwipeLeft();
+            }
+          },
+          child: SizedBox(
+            height: 280,
+            child: BarChartWidget(
+              dates: visibleDates,
+              values: visibleValues,
               selectedDate: selectedDate,
+              currentHour: currentHour,
             ),
-          ],
+          ),
         );
       },
     );

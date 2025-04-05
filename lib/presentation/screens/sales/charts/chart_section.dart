@@ -18,13 +18,13 @@ class ChartSection extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(Dimensions.width16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(Dimensions.height12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
-              offset: Offset(0, 3),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
+              blurRadius: Dimensions.height6,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -35,15 +35,14 @@ class ChartSection extends StatelessWidget {
               padding: EdgeInsets.only(bottom: Dimensions.height10),
               child: Text(
                 'SALES SUMMARY',
-                style: TextStyle(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: Dimensions.font18,
-                  color: Color(0xFF00308F),
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ),
             SizedBox(height: Dimensions.height20),
-            GaugeChartSection(),
+            const GaugeChartSection(),
             SizedBox(height: Dimensions.height20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

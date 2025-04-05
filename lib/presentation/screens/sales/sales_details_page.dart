@@ -29,14 +29,14 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
+        title: Text(
           'Sales Details',
-          style: TextStyle(color: Colors.white),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: Theme.of(context).appBarTheme.foregroundColor,
+          ),
         ),
-        backgroundColor: const Color(0xFF00308F),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GetBuilder<TopDashboardController>(
         builder: (controller) {
           final model = controller.topDashboardModel;
@@ -67,12 +67,12 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
                 _buildDetailRow('Receipts', (model?.receipts ?? 0).toDouble()),
                 SizedBox(height: Dimensions.height20),
                 _buildDetailRow('Refunds', model?.refunds ?? 0.0),
-                const Divider(),
+                Divider(color: Theme.of(context).dividerColor),
                 SizedBox(height: Dimensions.height20),
                 _buildDetailRow('Discounts', model?.discounts ?? 0.0),
                 SizedBox(height: Dimensions.height20),
                 _buildDetailRow('Cost of Goods', model?.costOfGoods ?? 0.0),
-                const Divider(),
+                Divider(color: Theme.of(context).dividerColor),
                 SizedBox(height: Dimensions.height20),
                 _buildDetailRow(
                   'Gross Profit',
@@ -87,27 +87,29 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
     );
   }
 
-  Widget _buildDetailRow(String label, double value, {bool isBold = false}) =>
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: Dimensions.font16,
-                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-            Text(
-              '₱${value.toStringAsFixed(2)}',
-              style: TextStyle(
-                fontSize: Dimensions.font16,
-                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
+  Widget _buildDetailRow(String label, double value, {bool isBold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style:
+              isBold
+                  ? Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
+                  : Theme.of(context).textTheme.bodyLarge,
         ),
-      );
+        Text(
+          '₱${value.toStringAsFixed(2)}',
+          style:
+              isBold
+                  ? Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
+                  : Theme.of(context).textTheme.bodyLarge,
+        ),
+      ],
+    );
+  }
 }

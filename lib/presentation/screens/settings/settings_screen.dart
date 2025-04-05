@@ -14,17 +14,13 @@ class ThemeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
-    bool isDarkMode = _storage.read('isDarkMode') ?? false;
-    Get.changeThemeMode(isDarkMode ? ThemeMode.dark : ThemeMode.light);
+    _isDarkMode.value = _storage.read('isDarkMode') ?? false;
+    Get.changeThemeMode(_isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
   }
 
   void toggleTheme() {
     _isDarkMode.value = !_isDarkMode.value;
-    Get.changeThemeMode(
-      _isDarkMode.value ? ThemeMode.dark : ThemeMode.light
-    );
-
+    Get.changeThemeMode(_isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
     _storage.write('isDarkMode', _isDarkMode.value);
   }
 }
@@ -39,97 +35,46 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
-    
-  final ThemeController themeController = Get.find<ThemeController>();
+    final ThemeController themeController = Get.find<ThemeController>();
 
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: ListView(
         children: [
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Obx(() => SwitchListTile(
-                    title: Text('Dark Mode'),
-                    value: themeController.isDarkMode, 
-                    onChanged: (_) => themeController.toggleTheme(),
-                    )),
-                ]
-              )
-            ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: Dimensions.height16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context, 
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Terms and Conditions'),
-                            content: SingleChildScrollView(
-                              child: Text(
-                                'You will be redirected to our page containing the terms and conditions in your browser.'
-                              )
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Close'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => TermsWebviewScreen(
-                                        url: 'https://www.sellercenter.shoppazing.com/home/terms',
-                                        ),
-                                    ),
-                                  );
-                                },
-                                child: Text('View Full Terms'),
-                              )
-                            ],
-                          );
-                        },
-                        );
-                    },
-                    child: Text('Terms and Conditions'))
-                ],
+          const SizedBox(height: 16),
+          Obx(
+            () => SwitchListTile(
+              title: const Text('Dark Mode'),
+              subtitle: Text(
+                themeController.isDarkMode
+                    ? 'Dark theme enabled'
+                    : 'Light theme enabled',
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-            )
+              value: themeController.isDarkMode,
+              onChanged: (_) => themeController.toggleTheme(),
+            ),
+          ),
+          const Divider(),
+          // Add more settings items here
         ],
       ),
-         bottomNavigationBar: InkWell(
-          onTap: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoginScreen(),
-              ),
-            );
-          },
-          child: BottomAppBar(
-            child: SizedBox(
-              height: Dimensions.height50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('LOGOUT'),
-                ],
-              )
-            )
-          )
-         ),
-      );
+      bottomNavigationBar: InkWell(
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        },
+        child: BottomAppBar(
+          child: SizedBox(
+            height: Dimensions.height50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Text('LOGOUT')],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

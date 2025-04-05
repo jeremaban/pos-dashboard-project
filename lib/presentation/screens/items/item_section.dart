@@ -37,18 +37,16 @@ class _ItemsSectionState extends State<ItemsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeController themeController = Get.find();
-
     return Container(
       padding: EdgeInsets.all(Dimensions.width16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(Dimensions.height12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: Dimensions.height6,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -58,10 +56,9 @@ class _ItemsSectionState extends State<ItemsSection> {
           Center(
             child: Text(
               'ITEMS',
-              style: TextStyle(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: Dimensions.font18,
-                color: const Color(0xFF00308F),
+                color:Theme.of(context).primaryColor,
               ),
             ),
           ),
@@ -70,7 +67,12 @@ class _ItemsSectionState extends State<ItemsSection> {
             builder: (controller) {
               List<Top5Items> items = getItems();
               if (controller.top5ItemsList.isEmpty) {
-                return const Center(child: Text("No items found"));
+                return Center(
+                  child: Text(
+                    "No items found",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                );
               }
 
               List<Top5Items> topItems = List.from(controller.top5ItemsList);
@@ -85,10 +87,9 @@ class _ItemsSectionState extends State<ItemsSection> {
                 itemCount: topItems.length,
                 separatorBuilder:
                     (context, index) =>
-                        Divider(color: Colors.grey.shade300, thickness: 1),
+                        Divider(color: Theme.of(context).dividerColor),
                 itemBuilder: (context, index) {
                   var item = topItems[index];
-
                   String itemName = item.itemName ?? "Unknown Item";
                   if (itemName.length > 20) {
                     itemName = '${itemName.substring(0, 20)}...';
@@ -101,15 +102,9 @@ class _ItemsSectionState extends State<ItemsSection> {
                     child: MainSalesWidget(
                       itemName: itemName,
                       quantity: quantity,
-                      itemImage: Image.network(
-                        "Icons.image_not_supported",
-                        width: Dimensions.width60,
-                        height: Dimensions.height60,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.image_not_supported,
-                          );
-                        },
+                      itemImage: Icon(
+                        Icons.inventory_2,
+                        color: Theme.of(context).iconTheme.color,
                       ),
                     ),
                   );

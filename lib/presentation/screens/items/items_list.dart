@@ -27,7 +27,7 @@ class _ItemsListState extends State<ItemsList> {
     await itemController.getItemList();
   }
 
-  List<Items> getItems() { // Corrected to List<Items>
+  List<Items> getItems() {
     if (itemController.itemList.isEmpty) {
       return [];
     }
@@ -51,57 +51,97 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ItemController>( //Corrected GetBuilder
+    return GetBuilder<ItemController>(
       builder: (controller) {
-        List<Items> items = getItems(); // Corrected to List<Items>
+        List<Items> items = getItems();
 
         return items.isEmpty
-            ? const Center(child: Text("No items found"))
+            ? Center(
+              child: Text(
+                "No items found",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            )
             : ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  var item = items[index];
-
-                  String stockStatus;
-                  Color stockColor;
-                  int stock = item.currentStock!;
-
-                  if (stock == 0) {
-                    stockStatus = "Out of Stock";
-                    stockColor = Colors.redAccent;
-                  } else if (stock < 5) {
-                    stockStatus = "Critical Level: $stock";
-                    stockColor = Colors.orangeAccent;
-                  } else {
-                    stockStatus = "$stock in stock";
-                    stockColor = Colors.black;
-                  }
-
-                  return ListTile(
-                    leading: Image.network(
-                      "${AppConstants.BASE_URL}${item.imgUrl}",
-                      width: Dimensions.height50,
-                      height: Dimensions.height50,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      },
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.image_not_supported),
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                var item = items[index];
+                return Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: Dimensions.width16,
+                    vertical: Dimensions.height8,
+                  ),
+                  elevation: 2,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(Dimensions.height16),
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).cardColor,
+                      child: Icon(
+                        Icons.inventory_2,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                     ),
-                    title: Text(item.itemName!),
-                    subtitle: Text(
-                      stockStatus,
-                      style: TextStyle(color: stockColor),
+                    title: Text(
+                      item.itemName ?? 'Unknown Item',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
-                  );
-                },
-              );
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: Dimensions.height8),
+                        Text(
+                          'Stock: ${item.currentStock ?? 0}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        Text(
+                          'Price: ₱${item.price?.toStringAsFixed(2) ?? '0.00'}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                    trailing: Container(
+                      padding: EdgeInsets.all(Dimensions.height8),
+                      decoration: BoxDecoration(
+                        color: _getStockStatusColor(
+                          context,
+                          item.currentStock ?? 0,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          Dimensions.radius15,
+                        ),
+                      ),
+                      child: Text(
+                        _getStockStatus(item.currentStock ?? 0),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
       },
     );
+  }
+
+  Color _getStockStatusColor(BuildContext context, int stock) {
+    if (stock == 0) {
+      return Colors.red;
+    } else if (stock < 5) {
+      return Colors.orange;
+    } else {
+      return Theme.of(context).primaryColor;
+    }
+  }
+
+  String _getStockStatus(int stock) {
+    if (stock == 0) {
+      return 'Out of Stock';
+    } else if (stock < 5) {
+      return 'Critical';
+    } else {
+      return 'In Stock';
+    }
   }
 }

@@ -11,7 +11,7 @@ class MainSalesWidget extends StatelessWidget {
     super.key,
     required this.itemName,
     required this.quantity,
-    this.itemImage
+    this.itemImage,
   });
 
   @override
@@ -27,28 +27,27 @@ class MainSalesWidget extends StatelessWidget {
           Row(
             children: [
               if (itemImage != null)
-              CircleAvatar(
-                radius: Dimensions.radius15,
-                backgroundColor: Colors.grey[200],
-                child: ClipOval(
-                  child: SizedBox(
-                    width: Dimensions.width30, 
-                    height: Dimensions.height30, 
-                    child: itemImage
+                CircleAvatar(
+                  radius: Dimensions.radius15,
+                  backgroundColor: Theme.of(context).cardColor,
+                  child: ClipOval(
+                    child: SizedBox(
+                      width: Dimensions.width30,
+                      height: Dimensions.height30,
+                      child: itemImage,
+                    ),
                   ),
                 ),
-              ),
-              if (itemImage != null)
-              SizedBox(width: Dimensions.width10),
-              Text(itemName, style: TextStyle(fontSize: Dimensions.font16))
-            ]
+              if (itemImage != null) SizedBox(width: Dimensions.width10),
+              Text(itemName, style: Theme.of(context).textTheme.bodyLarge),
+            ],
           ),
           Text(
-            quantity.toString(), 
-            style: TextStyle(fontSize: Dimensions.font16)
+            quantity.toString(),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
-        ]
-      )
+        ],
+      ),
     );
   }
 }

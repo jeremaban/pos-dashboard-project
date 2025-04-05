@@ -15,7 +15,7 @@ class CategoriesSection extends StatefulWidget {
 
 class _CategoriesSectionState extends State<CategoriesSection> {
   final TopDashboardController topDashboardController =
-    Get.find<TopDashboardController>();
+      Get.find<TopDashboardController>();
 
   @override
   void initState() {
@@ -42,11 +42,11 @@ class _CategoriesSectionState extends State<CategoriesSection> {
     return Container(
       padding: EdgeInsets.all(Dimensions.width16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(Dimensions.height12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: Dimensions.height6,
             offset: const Offset(0, 3),
           ),
@@ -58,10 +58,9 @@ class _CategoriesSectionState extends State<CategoriesSection> {
           Center(
             child: Text(
               'CATEGORIES',
-              style: TextStyle(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: Dimensions.font18,
-                color: const Color(0xFF00308F), // Air Force Blue
+                color: Theme.of(context).primaryColor,
               ),
             ),
           ),
@@ -70,10 +69,17 @@ class _CategoriesSectionState extends State<CategoriesSection> {
             builder: (controller) {
               List<Top5Categories> categories = getCategories();
               if (controller.top5CategoriesList.isEmpty) {
-                return const Center(child: Text("No categories found"));
+                return Center(
+                  child: Text(
+                    "No categories found",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                );
               }
 
-              List<Top5Categories> topCategories = List.from(controller.top5CategoriesList);
+              List<Top5Categories> topCategories = List.from(
+                controller.top5CategoriesList,
+              );
               topCategories.sort(
                 (a, b) => (b.grossSales ?? 0).compareTo(a.grossSales ?? 0),
               );
@@ -83,10 +89,9 @@ class _CategoriesSectionState extends State<CategoriesSection> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: topCategories.length,
-                separatorBuilder: (context, index) => Divider(
-                  color: Colors.grey.shade300,
-                  thickness: 1,
-                ),
+                separatorBuilder:
+                    (context, index) =>
+                        Divider(color: Theme.of(context).dividerColor),
                 itemBuilder: (context, index) {
                   var category = topCategories[index];
 

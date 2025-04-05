@@ -26,10 +26,6 @@ class TopDashboardController extends GetxController {
   List<double> _hourlySales = List.filled(24, 0.0);
   List<double> get hourlySales => _hourlySales;
 
-  // Sample daily sales data - Replace this with actual API data
-  List<double> _dailySales = [4800, 6700, 4300, 4500, 5500, 3000, 5500];
-  List<double> get dailySales => _dailySales;
-
   Future<void> getTopList() async {
     try {
       dio.Response response = await topDashboardRepo.getTopList();
@@ -43,7 +39,6 @@ class TopDashboardController extends GetxController {
         _top5ItemsList = _topDashboardModel!.top5Items;
         _barchartPerHour = _topDashboardModel!.barchartPerHour;
 
-        // Parse the barchartPerHour string into hourly sales data
         if (_barchartPerHour != null) {
           try {
             List<String> hourlyData = _barchartPerHour!.split(',');
@@ -54,9 +49,6 @@ class TopDashboardController extends GetxController {
             print("Error parsing barchartPerHour data: $e");
           }
         }
-
-        // TODO: Add API call for daily sales data
-        // For now, using sample data
 
         update();
 

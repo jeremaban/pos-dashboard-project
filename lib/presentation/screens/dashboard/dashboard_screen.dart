@@ -91,9 +91,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       builder: (controller) {
         print("Dashboard_Screen.dart loaded.");
         return Scaffold(
-          body: controller.isInitialized
-            ? _buildDashboard()
-            : const Center(child: CircularProgressIndicator()),
+          body:
+              controller.isInitialized
+                  ? _buildDashboard()
+                  : const Center(child: CircularProgressIndicator()),
         );
       },
     );
@@ -126,18 +127,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         Text(
                           _currentListOption,
-                          style: TextStyle(color: Colors.white),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleLarge?.copyWith(
+                            color:
+                                Theme.of(context).appBarTheme.foregroundColor,
+                          ),
                         ),
-                        const Icon(Icons.arrow_drop_down, color: Colors.white),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: Theme.of(context).appBarTheme.foregroundColor,
+                        ),
                       ],
                     ),
                   ),
                 )
                 : Center(child: _appBarTitle),
-        backgroundColor: const Color(0xFF00308F),
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: bodyContent,
       bottomNavigationBar: BottomNavigationBar(
         items: const [
@@ -155,7 +162,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF00308F),
+        selectedItemColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).cardColor,
+        unselectedItemColor: Theme.of(context).unselectedWidgetColor,
         onTap: _onItemTapped,
       ),
     );

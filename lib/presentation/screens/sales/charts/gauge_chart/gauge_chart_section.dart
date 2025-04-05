@@ -17,7 +17,6 @@ class GaugeChartSection extends StatelessWidget {
     return GetBuilder<TopDashboardController>(
       builder: (controller) {
         final model = controller.topDashboardModel;
-
         final maxGrossSales = model?.grossSales ?? 0.0;
         final maxSalesToday = model?.salesToday ?? 0.0;
 
@@ -30,7 +29,7 @@ class GaugeChartSection extends StatelessWidget {
                 title: 'Receipts',
                 percentage: model?.receipts?.toDouble() ?? 0,
                 value: model?.receipts?.toDouble() ?? 0,
-                color: Colors.orange,
+                color: const Color(0xFFFFA726),
                 changePercentage: 35,
                 sizeFactor: 0.8,
               ),
@@ -42,7 +41,7 @@ class GaugeChartSection extends StatelessWidget {
                   maxGrossSales,
                 ),
                 value: model?.salesToday ?? 0,
-                color: Colors.green,
+                color: const Color(0xFF66BB6A),
                 changePercentage: 21,
                 sizeFactor: 0.8,
               ),
@@ -51,7 +50,7 @@ class GaugeChartSection extends StatelessWidget {
                 title: 'Gross Sales',
                 percentage: 100,
                 value: model?.grossSales ?? 0,
-                color: Colors.blue,
+                color: const Color(0xFF00308F),
                 changePercentage: -9,
                 sizeFactor: 0.8,
               ),

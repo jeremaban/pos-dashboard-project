@@ -3,8 +3,13 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class TermsWebviewScreen extends StatefulWidget {
   final String url;
+  final String title;
 
-  const TermsWebviewScreen({super.key, required this.url});
+  const TermsWebviewScreen({
+    super.key,
+    required this.url,
+    this.title = 'Terms and Conditions',
+  });
 
   @override
   State<TermsWebviewScreen> createState() => _TermsWebviewScreenState();
@@ -17,24 +22,26 @@ class _TermsWebviewScreenState extends State<TermsWebviewScreen> {
   @override
   void initState() {
     super.initState();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (String url) {
-            setState(() {
-              isLoading = false;
-            });
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
+    controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onPageFinished: (String url) {
+                setState(() {
+                  isLoading = false;
+                });
+              },
+            ),
+          )
+          ..loadRequest(Uri.parse(widget.url));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Terms and Conditions'),
+        title: Text(widget.title),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -43,10 +50,7 @@ class _TermsWebviewScreenState extends State<TermsWebviewScreen> {
       body: Stack(
         children: [
           WebViewWidget(controller: controller),
-          if (isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
+          if (isLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
     );

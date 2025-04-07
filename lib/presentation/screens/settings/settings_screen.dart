@@ -58,22 +58,77 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Add more settings items here
         ],
       ),
-      bottomNavigationBar: InkWell(
-        onTap: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
-          );
-        },
-        child: BottomAppBar(
-          child: SizedBox(
-            height: Dimensions.height50,
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('LOGOUT')],
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => const TermsWebviewScreen(
+                              url:
+                                  'https://sellercenter.shoppazing.com/home/terms',
+                              title: 'Terms and Conditions',
+                            ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Terms and Conditions',
+                    style: TextStyle(fontSize: Dimensions.font12),
+                  ),
+                ),
+                Text(' · ', style: TextStyle(fontSize: Dimensions.font18)),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => const TermsWebviewScreen(
+                              url:
+                                  'https://sellercenter.shoppazing.com/home/privacy',
+                              title: 'Privacy Policy',
+                            ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Privacy Policy',
+                    style: TextStyle(fontSize: Dimensions.font12),
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
+          InkWell(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
+            },
+            child: BottomAppBar(
+              child: SizedBox(
+                height: Dimensions.height50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Text('LOGOUT')],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

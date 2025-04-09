@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/data/models/top_dashboard_model.dart';
+import 'package:pos_dashboard/presentation/controllers/theme_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/top_dashboard_controller.dart';
 import 'package:pos_dashboard/presentation/screens/sales/main_sales_widget.dart';
 import 'package:pos_dashboard/presentation/screens/settings/settings_screen.dart';

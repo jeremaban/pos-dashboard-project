@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final LoginController loginController = Get.find();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   final Color primaryColor = const Color(0xFF00308F);
 
   @override
@@ -22,11 +27,7 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/image/logo.png',
-                height: 140,
-                width: 140,
-              ),
+              Image.asset('assets/image/logo.png', height: 140, width: 140),
               const SizedBox(height: 40),
 
               TextField(
@@ -77,39 +78,45 @@ class LoginScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: loginController.isLoading.value
-                        ? null
-                        : () {
-                            loginController
-                                .login(
-                                  usernameController.text,
-                                  passwordController.text,
-                                )
-                                .then((_) {
-                              if (loginController.errorMessage.isNotEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      loginController.errorMessage.value,
-                                    ),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            });
-                          },
-                    child: loginController.isLoading.value
-                        ? const CircularProgressIndicator(
-                            color: Colors.white,
-                          )
-                        : const Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                    onPressed:
+                        loginController.isLoading.value
+                            ? null
+                            : () {
+                              loginController
+                                  .login(
+                                    usernameController.text,
+                                    passwordController.text,
+                                  )
+                                  .then((_) {
+                                    if (loginController
+                                        .errorMessage
+                                        .isNotEmpty) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            loginController.errorMessage.value,
+                                          ),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  });
+                            },
+                    child:
+                        loginController.isLoading.value
+                            ? const CircularProgressIndicator(
                               color: Colors.white,
+                            )
+                            : const Text(
+                              "Login",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
                   ),
                 ),
               ),

@@ -11,20 +11,18 @@ class LoginController extends GetxController {
   //RX for reactive state management
   final RxString _accessToken = RxString('');
   final RxBool isPinSetup = false.obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxBool isOTPRequired = false.obs;
+  final Rx<Map<String, String>> tempCredentials = Rx<Map<String, String>>({});
 
   String get accessToken => _accessToken.value;
 
   LoginController({required this.loginRepository});
 
-  var isLoading = false.obs;
-  var errorMessage = ''.obs;
-  var isOTPRequired = false.obs;
-  var tempCredentials = <String, String>{};
-
   @override
   void onInit() {
     super.onInit();
-    // Clear any existing data on controller initialization
     clearStoredData();
   }
 
@@ -33,6 +31,7 @@ class LoginController extends GetxController {
     await prefs.clear();
     isPinSetup.value = false;
     _accessToken.value = '';
+    tempCredentials.value = {};
   }
 
   Future<String> getInitialRoute() async {
@@ -41,34 +40,17 @@ class LoginController extends GetxController {
       isPinSetup.value = prefs.getBool('isPinSetup') ?? false;
       String? storedToken = prefs.getString('access_token');
 
-      // Only return pin verification if both PIN and token exist
       if (isPinSetup.value && storedToken != null && storedToken.isNotEmpty) {
         _accessToken.value = storedToken;
         return '/pin-verification';
       }
 
-      // If either is missing, clear everything and go to login
       await clearStoredData();
       return '/';
     } catch (e) {
       print('Error checking initial route: $e');
       await clearStoredData();
       return '/';
-    }
-  }
-
-  Future<void> checkPinSetup() async {
-    final prefs = await _prefs;
-    isPinSetup.value = prefs.getBool('isPinSetup') ?? false;
-    String? storedToken = prefs.getString('access_token');
-
-    if (!(isPinSetup.value && storedToken != null && storedToken.isNotEmpty)) {
-      // Clear everything if either PIN or token is missing
-      await prefs.clear();
-      isPinSetup.value = false;
-      _accessToken.value = '';
-    } else {
-      _accessToken.value = storedToken;
     }
   }
 
@@ -80,11 +62,17 @@ class LoginController extends GetxController {
 
     isLoading.value = true;
     errorMessage.value = '';
-    try {
-      tempCredentials = {'username': username, 'password': password};
 
-      isOTPRequired.value = true;
-      Get.toNamed('/otp-verification');
+    try {
+      final response = await loginRepository.login(username, password);
+
+      if (response.statusCode == 200) {
+        tempCredentials.value = {'username': username, 'password': password};
+        isOTPRequired.value = true;
+        Get.toNamed('/otp-verification');
+      } else {
+        errorMessage.value = "Login failed. Please check your credentials.";
+      }
     } catch (e) {
       String error = "Login failed. Please try again";
 
@@ -95,10 +83,10 @@ class LoginController extends GetxController {
           error = "Server error. Please try again later";
         }
       }
-
       errorMessage.value = error;
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   Future<void> verifyOTP(String otp) async {
@@ -109,29 +97,33 @@ class LoginController extends GetxController {
 
     isLoading.value = true;
     errorMessage.value = '';
+
     try {
+      // TODO: Replace with actual OTP verification API call
       if (otp == "123456") {
+        // Make the actual login API call
         dio.Response response = await loginRepository.login(
-          tempCredentials['username']!,
-          tempCredentials['password']!,
+          tempCredentials.value['username']!,
+          tempCredentials.value['password']!,
         );
-        if (response.statusCode == 200) {
+
+        if (response.statusCode == 200 && response.data != null) {
           _accessToken.value = response.data['access_token'];
-          // Store access token
           final prefs = await _prefs;
           await prefs.setString('access_token', _accessToken.value);
-          print("Login Successful: $accessToken");
           Get.toNamed('/pin-verification');
         } else {
-          errorMessage.value = "Invalid OTP";
+          errorMessage.value = "Login failed. Please try again.";
         }
       } else {
         errorMessage.value = "Invalid OTP";
       }
     } catch (e) {
       errorMessage.value = "OTP verification failed. Please try again";
+      print("Login error: $e");
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   Future<void> verifyPin(String pin) async {
@@ -142,7 +134,10 @@ class LoginController extends GetxController {
 
     isLoading.value = true;
     errorMessage.value = '';
+
     try {
+      await Future.delayed(const Duration(seconds: 1));
+
       if (pin == "000000") {
         final prefs = await _prefs;
         await prefs.setBool('isPinSetup', true);
@@ -153,8 +148,9 @@ class LoginController extends GetxController {
       }
     } catch (e) {
       errorMessage.value = "PIN verification failed. Please try again";
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   Future<void> logout() async {
@@ -176,7 +172,8 @@ class LoginController extends GetxController {
       );
     } catch (e) {
       errorMessage.value = "Failed to resend OTP. Please try again";
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 }

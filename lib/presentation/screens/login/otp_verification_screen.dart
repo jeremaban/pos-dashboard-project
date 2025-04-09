@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'dart:async';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
+import 'package:pos_dashboard/presentation/controllers/otp_controller.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   const OTPVerificationScreen({super.key});
@@ -14,6 +14,7 @@ class OTPVerificationScreen extends StatefulWidget {
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final LoginController loginController = Get.find();
+  final OTPController otpController = Get.put(OTPController());
   final List<TextEditingController> otpControllers = List.generate(
     6,
     (index) => TextEditingController(),
@@ -21,19 +22,14 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
   final Color primaryColor = const Color(0xFF00308F);
 
-  Timer? _timer;
-  RxInt _timeLeft = 300.obs; // 5 minutes in seconds
-  RxBool _isExpired = false.obs;
-
   @override
   void initState() {
     super.initState();
-    startTimer();
+    otpController.startTimer();
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     for (var controller in otpControllers) {
       controller.dispose();
     }
@@ -41,26 +37,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       node.dispose();
     }
     super.dispose();
-  }
-
-  void startTimer() {
-    _isExpired.value = false;
-    _timeLeft.value = 300;
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_timeLeft.value > 0) {
-        _timeLeft.value--;
-      } else {
-        _isExpired.value = true;
-        timer.cancel();
-      }
-    });
-  }
-
-  String getFormattedTime() {
-    int minutes = _timeLeft.value ~/ 60;
-    int seconds = _timeLeft.value % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   String getOTP() {
@@ -72,10 +48,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       controller.clear();
     }
     focusNodes[0].requestFocus();
-  }
-
-  void onOTPVerified() {
-    Get.offNamed('/pin-verification');
   }
 
   @override
@@ -107,15 +79,20 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               const SizedBox(height: 10),
               Obx(
                 () => Text(
-                  'Time remaining: ${getFormattedTime()}',
+                  'Time remaining: ${otpController.getFormattedTime()}',
                   style: TextStyle(
                     fontSize: 14,
-                    color: _timeLeft.value < 60 ? Colors.red : Colors.grey,
+                    color:
+                        otpController.timeLeft.value < 60
+                            ? Colors.red
+                            : Colors.grey,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const SizedBox(height: 30),
+
+              // OTP input fields
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(
@@ -156,6 +133,22 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // Error message
+              Obx(() {
+                if (loginController.errorMessage.value.isNotEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text(
+                      loginController.errorMessage.value,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
+
+              // Verify button
               Obx(
                 () => SizedBox(
                   width: double.infinity,
@@ -168,31 +161,19 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       ),
                     ),
                     onPressed:
-                        (loginController.isLoading.value || _isExpired.value)
+                        (loginController.isLoading.value ||
+                                otpController.isExpired.value)
                             ? null
-                            : () {
-                              loginController.verifyOTP(getOTP()).then((_) {
-                                if (loginController.errorMessage.isNotEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        loginController.errorMessage.value,
-                                      ),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                } else {
-                                  onOTPVerified();
-                                }
-                              });
-                            },
+                            : () => loginController.verifyOTP(getOTP()),
                     child:
                         loginController.isLoading.value
                             ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
                             : Text(
-                              _isExpired.value ? "OTP Expired" : "Verify OTP",
+                              otpController.isExpired.value
+                                  ? "OTP Expired"
+                                  : "Verify OTP",
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -202,28 +183,33 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Obx(
-                () =>
-                    _isExpired.value
-                        ? TextButton(
-                          onPressed: () {
-                            loginController.resendOTP().then((_) {
-                              clearOTPFields();
-                              startTimer();
-                            });
-                          },
-                          child: Text(
-                            "Resend OTP",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+
+              // Resend OTP button - only show when timer expires
+              Obx(() {
+                if (otpController.isExpired.value) {
+                  return Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () {
+                          loginController.resendOTP();
+                          otpController.startTimer();
+                          clearOTPFields();
+                        },
+                        child: Text(
+                          "Resend OTP",
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                        )
-                        : const SizedBox.shrink(),
-              ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
             ],
           ),
         ),

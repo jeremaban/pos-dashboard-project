@@ -12,17 +12,33 @@ class ApiClient {
             "Content-Type": "application/json",
             "Accept": "application/json",
           },
+          validateStatus: (status) {
+            return status! < 500;
+          },
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 30),
           sendTimeout: const Duration(seconds: 10),
         ),
       );
 
+  void updateAuthToken(String? token) {
+    if (token != null && token.isNotEmpty) {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+    } else {
+      _dio.options.headers.remove('Authorization');
+    }
+  }
+
   Future<Response> getData(
     String uri, {
     Map<String, dynamic>? queryParams,
+    String? authToken,
   }) async {
     try {
+      if (authToken != null) {
+        updateAuthToken(authToken);
+      }
+
       Response response = await _dio.get(uri, queryParameters: queryParams);
       return response;
     } on DioException catch (e) {
@@ -55,22 +71,23 @@ class ApiClient {
       print("Attempting POST form data to: $uri");
       print("With data: $data");
 
-      _dio.options.contentType = Headers.jsonContentType;
-
-      //FOR TOKEN
-      if (authToken != null && authToken.isNotEmpty) {
-        _dio.options.headers['Authorization'] = 'Bearer $authToken';
+      if (authToken != null) {
+        updateAuthToken(authToken);
       }
+
+      _dio.options.contentType = Headers.jsonContentType;
 
       Response response = await _dio.post(uri, data: jsonEncode(data));
 
       print("Response received: ${response.statusCode}");
+      if (response.data != null) {
+        print("Response data: ${jsonEncode(response.data)}");
+      }
 
-      print("Response data: ${jsonEncode(response.data)}");
       return response;
     } on DioException catch (e) {
       print("POST request failed on api_client.dart: ${e.type} - ${e.message}");
-      print("Request data was: ${e.requestOptions.data}");
+      print("Request data was: ${jsonEncode(data)}");
       if (e.response != null) {
         return e.response!;
       } else {

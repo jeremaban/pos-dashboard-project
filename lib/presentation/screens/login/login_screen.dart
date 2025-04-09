@@ -67,6 +67,20 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 30),
 
+              Obx(() {
+                // Show error message if any
+                if (loginController.errorMessage.value.isNotEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text(
+                      loginController.errorMessage.value,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
+
               Obx(
                 () => SizedBox(
                   width: double.infinity,
@@ -81,29 +95,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed:
                         loginController.isLoading.value
                             ? null
-                            : () {
-                              loginController
-                                  .login(
-                                    usernameController.text,
-                                    passwordController.text,
-                                  )
-                                  .then((_) {
-                                    if (loginController
-                                        .errorMessage
-                                        .isNotEmpty) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            loginController.errorMessage.value,
-                                          ),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-                                  });
-                            },
+                            : () => loginController.login(
+                              usernameController.text,
+                              passwordController.text,
+                            ),
                     child:
                         loginController.isLoading.value
                             ? const CircularProgressIndicator(

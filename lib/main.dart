@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:pos_dashboard/core/dependencies.dart' as dep;
 import 'package:pos_dashboard/data/repositories/item_repo.dart';
 import 'package:pos_dashboard/data/repositories/top_dashboard_repo.dart';
+import 'package:pos_dashboard/notification/notification_service.dart';
 import 'package:pos_dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
@@ -20,6 +21,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await dep.init();
+
+    await NotificationService().init();
 
     Get.put(ThemeController());
 

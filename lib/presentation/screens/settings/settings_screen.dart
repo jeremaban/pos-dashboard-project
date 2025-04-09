@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:pos_dashboard/notification/notification_service.dart';
 import 'package:pos_dashboard/presentation/screens/login/login_screen.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/screens/settings/terms_webview_screen.dart';
@@ -54,8 +56,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onChanged: (_) => themeController.toggleTheme(),
             ),
           ),
+          ListTile(
+            title: const Text('Test Notification'),
+            subtitle: const Text('Send a test notification to verify functionality'),
+            trailing: ElevatedButton(
+              onPressed: () async {
+                await NotificationService().showImmediateNotification(
+                  id: 0, 
+                  title: 'Test Notification', 
+                  body: 'This is a test notification. From settings_screen.dart',
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Test notificaition sent!'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }, 
+              child: const Text('Test'),
+              ),
+          ),
           const Divider(),
-          // Add more settings items here
         ],
       ),
       bottomNavigationBar: Column(
@@ -132,4 +153,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+}
+
+Future<void> scheduleDailyReminder() async {
+  await NotificationService().scheduleDailyNotification(
+    id: 1, 
+    title: 'Daily Reminder', 
+    body: 'Don\'t forget to view your daily statistics!', 
+    scheduledTime: const TimeOfDay(hour: 8, minute: 0),
+  );
 }

@@ -53,9 +53,10 @@ class _DateSelectorState extends State<DateSelector> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: const Icon(Icons.arrow_left, size: 30),
+          icon: Icon(Icons.arrow_left, size: Dimensions.iconSize20),
           onPressed: () {
             setState(() {
               selectedDate = selectedDate.subtract(const Duration(days: 1));
@@ -63,7 +64,7 @@ class _DateSelectorState extends State<DateSelector> {
             widget.onDateChanged(selectedDate);
           },
         ),
-        SizedBox(width: 20),
+        SizedBox(width: Dimensions.width20),
         GestureDetector(
           onTap: () => _selectDate(context),
           child: Text(
@@ -76,7 +77,7 @@ class _DateSelectorState extends State<DateSelector> {
         ),
         SizedBox(width: 20),
         IconButton(
-          icon: const Icon(Icons.arrow_right, size: 30),
+          icon: Icon(Icons.arrow_right, size: Dimensions.iconSize20),
           onPressed: () {
             setState(() {
               selectedDate = selectedDate.add(const Duration(days: 1));

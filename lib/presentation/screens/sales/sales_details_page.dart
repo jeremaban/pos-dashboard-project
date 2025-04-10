@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos_dashboard/core/utils/dimensions.dart';
 import 'package:pos_dashboard/presentation/controllers/top_dashboard_controller.dart';
+import 'package:pos_dashboard/presentation/controllers/merchant_controller.dart';
 import 'package:pos_dashboard/presentation/widgets/date_selector.dart';
 
 class SalesDetailsPage extends StatefulWidget {
@@ -13,16 +14,31 @@ class SalesDetailsPage extends StatefulWidget {
 class _SalesDetailsPageState extends State<SalesDetailsPage> {
   DateTime _selectedDate = DateTime.now();
   late TopDashboardController _topDashboardController;
+  int? _selectedStoreId;
 
   @override
   void initState() {
     super.initState();
+    
     _topDashboardController = Get.find<TopDashboardController>();
-    _refreshData();
+    
+    if (Get.arguments != null && Get.arguments['storeId'] != null) {
+        //FROM MAIN SALES PAGE
+      _selectedStoreId = Get.arguments['storeId'];
+      _refreshData();
+    } else {
+      _selectedStoreId = 1; 
+      _refreshData();
+    }
   }
 
   void _refreshData() {
-    _topDashboardController.getTopList();
+    if (_selectedStoreId != null) {
+      _topDashboardController.getTopList(
+        date: _selectedDate,
+        storeIds: [_selectedStoreId!],
+      );
+    }
   }
 
   @override

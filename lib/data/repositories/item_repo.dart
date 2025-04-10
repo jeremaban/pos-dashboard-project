@@ -7,13 +7,14 @@ import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
 class ItemRepository extends GetxService {
   final ApiClient apiClient;
   final LoginController loginController;
+  //late Map<String, dynamic> body;
 
   ItemRepository({
     required this.apiClient,
     required this.loginController
     });
 
-
+  //CHANGE WITH MERCHANTCONTROLLER
   Map<String, dynamic> body = {
     "StoreId": 1,
     "POSId": 2,

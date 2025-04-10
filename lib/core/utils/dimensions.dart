@@ -55,4 +55,5 @@ class Dimensions {
 
   //iconsize
   static double iconSize5 = screenHeight / 155.6800048828125;
+  static double iconSize20 = screenHeight / 38.920001220703125;
 }

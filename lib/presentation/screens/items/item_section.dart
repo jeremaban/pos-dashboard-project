@@ -20,11 +20,6 @@ class _ItemsSectionState extends State<ItemsSection> {
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  void _loadData() async {
-    await topDashboardController.getTopList();
   }
 
   List<Top5Items> getItems() {

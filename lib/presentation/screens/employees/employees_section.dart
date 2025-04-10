@@ -22,11 +22,6 @@ class _EmployeesSectionState extends State<EmployeesSection> {
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  void _loadData() async {
-    await topDashboardController.getTopList();
   }
 
   List<Top5Employees> getEmployees() {

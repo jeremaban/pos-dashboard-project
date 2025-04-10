@@ -4,11 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pos_dashboard/core/dependencies.dart' as dep;
 import 'package:pos_dashboard/data/repositories/item_repo.dart';
+import 'package:pos_dashboard/data/repositories/merchant_repo.dart';
 import 'package:pos_dashboard/data/repositories/top_dashboard_repo.dart';
 import 'package:pos_dashboard/notification/notification_service.dart';
 import 'package:pos_dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/login_controller.dart';
+import 'package:pos_dashboard/presentation/controllers/merchant_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/theme_controller.dart';
 import 'package:pos_dashboard/data/repositories/login_repo.dart';
 import 'package:pos_dashboard/presentation/controllers/top_dashboard_controller.dart';
@@ -49,11 +51,14 @@ Future<void> main() async {
       TopDashboardRepo(apiClient: Get.find(), loginController: Get.find()),
     );
 
+    Get.put<MerchantRepository>(
+      MerchantRepository(apiClient: Get.find(), loginController: Get.find()),
+    );
+
     // Initialize remaining controllers
     Get.put<ItemController>(ItemController(itemRepository: Get.find()));
-    Get.put<TopDashboardController>(
-      TopDashboardController(topDashboardRepo: Get.find()),
-    );
+    Get.put<TopDashboardController>(TopDashboardController(topDashboardRepo: Get.find()));
+    Get.put<MerchantController>(MerchantController(merchantRepository: Get.find()));
 
     runApp(const PosDashboardApp());
   } catch (e) {

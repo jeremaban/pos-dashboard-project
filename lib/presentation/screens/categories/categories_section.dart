@@ -21,11 +21,6 @@ class _CategoriesSectionState extends State<CategoriesSection> {
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  void _loadData() async {
-    await topDashboardController.getTopList();
   }
 
   List<Top5Categories> getCategories() {

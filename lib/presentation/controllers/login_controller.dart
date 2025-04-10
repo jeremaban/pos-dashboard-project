@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:pos_dashboard/data/models/login_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pos_dashboard/data/repositories/login_repo.dart';
 
@@ -15,8 +19,14 @@ class LoginController extends GetxController {
   final RxString errorMessage = ''.obs;
   final RxBool isOTPRequired = false.obs;
   final Rx<Map<String, String>> tempCredentials = Rx<Map<String, String>>({});
+  
+
+  final Rx<LoginModel?> loginData = Rx<LoginModel?>(null);
 
   String get accessToken => _accessToken.value;
+  String get merchantId => loginData.value?.merchantId ?? '';
+  String get userName => loginData.value?.userName ?? '';
+  String get businessName => loginData.value?.businessName ?? '';
 
   LoginController({required this.loginRepository});
 
@@ -31,6 +41,7 @@ class LoginController extends GetxController {
     await prefs.clear();
     isPinSetup.value = false;
     _accessToken.value = '';
+    loginData.value = null;
     tempCredentials.value = {};
   }
 
@@ -39,9 +50,12 @@ class LoginController extends GetxController {
       final prefs = await _prefs;
       isPinSetup.value = prefs.getBool('isPinSetup') ?? false;
       String? storedToken = prefs.getString('access_token');
+      String? storedLoginData = prefs.getString('loginData');
 
-      if (isPinSetup.value && storedToken != null && storedToken.isNotEmpty) {
+      if (isPinSetup.value && storedToken != null && storedToken.isNotEmpty && storedLoginData != null) {
         _accessToken.value = storedToken;
+
+        loginData.value = LoginModel.fromJson(jsonDecode(storedLoginData));
         return '/pin-verification';
       }
 
@@ -108,9 +122,15 @@ class LoginController extends GetxController {
         );
 
         if (response.statusCode == 200 && response.data != null) {
+
+          loginData.value = LoginModel.fromJson(response.data);
+
           _accessToken.value = response.data['access_token'];
           final prefs = await _prefs;
           await prefs.setString('access_token', _accessToken.value);
+
+          await prefs.setString('loginData', jsonEncode(loginData.value));
+            
           Get.toNamed('/pin-verification');
         } else {
           errorMessage.value = "Login failed. Please try again.";

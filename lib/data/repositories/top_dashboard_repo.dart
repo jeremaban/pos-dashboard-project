@@ -13,16 +13,17 @@ class TopDashboardRepo extends GetxService {
     required this.loginController
   });
 
-  Map<String, dynamic> body = {
-    "Date": "2025-03-20",
-    "StoreIds": [
-      1, 2
-    ]
-  };
-
-  Future<Response> getTopList() async {
+  Future<Response> getTopList({
+    required DateTime date,
+    required List<int> storeIds,
+  }) async {
 
     String accessToken = loginController.accessToken;
+
+    Map<String, dynamic> body = {
+      "Date": "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
+      "StoreIds": storeIds
+    };
 
     return await apiClient.postData(
       AppConstants.TOP5_PRODUCT, 

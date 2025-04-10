@@ -26,9 +26,15 @@ class TopDashboardController extends GetxController {
   List<double> _hourlySales = List.filled(24, 0.0);
   List<double> get hourlySales => _hourlySales;
 
-  Future<void> getTopList() async {
+  Future<void> getTopList({
+    required DateTime date,
+    required List<int> storeIds,
+  }) async {
     try {
-      dio.Response response = await topDashboardRepo.getTopList();
+      dio.Response response = await topDashboardRepo.getTopList(
+        date: date,
+        storeIds: storeIds,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Got data. Source: top_dashboard_controller.dart");

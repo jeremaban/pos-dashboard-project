@@ -26,7 +26,7 @@ class MerchantController extends GetxController {
         update();
 
         print("Number of stores loaded: ${_storeList.length}");
-        
+
         if (_storeList.isNotEmpty) {
           print("Sample store: ${_storeList.first}");
         }

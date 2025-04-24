@@ -57,8 +57,12 @@ Future<void> main() async {
 
     // Initialize remaining controllers
     Get.put<ItemController>(ItemController(itemRepository: Get.find()));
-    Get.put<TopDashboardController>(TopDashboardController(topDashboardRepo: Get.find()));
-    Get.put<MerchantController>(MerchantController(merchantRepository: Get.find()));
+    Get.put<TopDashboardController>(
+      TopDashboardController(topDashboardRepo: Get.find()),
+    );
+    Get.put<MerchantController>(
+      MerchantController(merchantRepository: Get.find()),
+    );
 
     runApp(const PosDashboardApp());
   } catch (e) {
@@ -78,6 +82,7 @@ class PosDashboardApp extends StatelessWidget {
         // Show loading screen while checking credentials
         if (snapshot.connectionState == ConnectionState.waiting) {
           return MaterialApp(
+            theme: AppTheme.lightTheme,
             home: Scaffold(
               body: Center(
                 child: CircularProgressIndicator(
@@ -109,7 +114,7 @@ class PosDashboardApp extends StatelessWidget {
               (themeController) => GetMaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
+                darkTheme: isAuthScreen ? null : AppTheme.darkTheme,
                 themeMode:
                     isAuthScreen
                         ? ThemeMode.light

@@ -5,6 +5,11 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:pos_dashboard/data/models/login_model.dart';
+import 'package:pos_dashboard/data/models/verify_otp_model.dart';
+import 'package:pos_dashboard/data/models/verify_pin_model.dart';
+import 'package:pos_dashboard/data/repositories/send_otp_repo.dart';
+import 'package:pos_dashboard/data/repositories/verify_otp_repo.dart';
+import 'package:pos_dashboard/data/repositories/verify_pin_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pos_dashboard/data/repositories/login_repo.dart';
 
@@ -24,11 +29,17 @@ class LoginController extends GetxController {
   final Rx<LoginModel?> loginData = Rx<LoginModel?>(null);
 
   String get accessToken => _accessToken.value;
+  String get userId => loginData.value?.userId ?? '';
+  String get phoneNumber => loginData.value?.phoneNumber ?? '';
   String get merchantId => loginData.value?.merchantId ?? '';
   String get userName => loginData.value?.userName ?? '';
   String get businessName => loginData.value?.businessName ?? '';
 
-  LoginController({required this.loginRepository});
+  LoginController( 
+    {
+      required this.loginRepository
+    }
+  );
 
   @override
   void onInit() {
@@ -104,6 +115,8 @@ class LoginController extends GetxController {
   }
 
   Future<void> verifyOTP(String otp) async {
+    final verifyOtpRepo = Get.find<VerifyOtpRepo>();
+    
     if (otp.isEmpty) {
       errorMessage.value = "Please enter OTP";
       return;
@@ -113,40 +126,56 @@ class LoginController extends GetxController {
     errorMessage.value = '';
 
     try {
-      // TODO: Replace with actual OTP verification API call
-      if (otp == "123456") {
-        // Make the actual login API call
-        dio.Response response = await loginRepository.login(
-          tempCredentials.value['username']!,
-          tempCredentials.value['password']!,
-        );
+      final response = await verifyOtpRepo.getVerifyOTP(otp);
 
-        if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
 
-          loginData.value = LoginModel.fromJson(response.data);
+        final verifyOTPModel = VerifyOTPModel.fromJson(response.data);
+        
+        if (verifyOTPModel.statusCode == 200 || verifyOTPModel.statusCode == 0) {
+          if (verifyOTPModel.userId != null) {
+            if (loginData.value == null) {
+              loginData.value = LoginModel();
+            }
 
-          _accessToken.value = response.data['access_token'];
-          final prefs = await _prefs;
-          await prefs.setString('access_token', _accessToken.value);
+            loginData.value!.userId = verifyOTPModel.userId!;
 
-          await prefs.setString('loginData', jsonEncode(loginData.value));
-            
-          Get.toNamed('/pin-verification');
+            dio.Response loginResponse = await loginRepository.login(
+              tempCredentials.value['username']!,
+              tempCredentials.value['password']!,
+            );
+
+            if (loginResponse.statusCode == 200 && loginResponse.data != null) {
+              loginData.value = LoginModel.fromJson(loginResponse.data);
+              _accessToken.value = loginResponse.data['access_token'];
+
+              final prefs = await _prefs;
+              await prefs.setString('access_token', _accessToken.value);
+              await prefs.setString('loginData', jsonEncode(loginData.value));
+
+              Get.toNamed('/pin-verification');
+            } else {
+              errorMessage.value = "Login failed. Please try again."; 
+            }
+          } else {
+            errorMessage.value = "Missing user information.";
+          }
         } else {
-          errorMessage.value = "Login failed. Please try again.";
+          errorMessage.value = verifyOTPModel.message ?? "Invalid OTP";
         }
       } else {
-        errorMessage.value = "Invalid OTP";
+        errorMessage.value = "OTP verification failed. Please try again.";
       }
     } catch (e) {
-      errorMessage.value = "OTP verification failed. Please try again";
-      print("Login error: $e");
+      errorMessage.value = "OPT verification failed. Please try again.";
+      print("OTP verification error: $e");
     } finally {
       isLoading.value = false;
     }
   }
 
   Future<void> verifyPin(String pin) async {
+    final verifyPinRepo = Get.find<VerifyPinRepo>();
     if (pin.isEmpty) {
       errorMessage.value = "Please enter PIN";
       return;
@@ -156,18 +185,29 @@ class LoginController extends GetxController {
     errorMessage.value = '';
 
     try {
-      await Future.delayed(const Duration(seconds: 1));
+      final response = await verifyPinRepo.getVerifyPin(pin);
 
-      if (pin == "000000") {
-        final prefs = await _prefs;
-        await prefs.setBool('isPinSetup', true);
-        isPinSetup.value = true;
-        Get.offAllNamed('/dashboard');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final verifyPINModel = VerifyPINModel.fromJson(response.data);
+
+        if (verifyPINModel.statusCode == 200 || verifyPINModel.statusCode == 0) {
+          if (verifyPINModel.message?.toLowerCase() == "success") {
+            final prefs = await _prefs;
+            await prefs.setBool('isPinSetup', true);
+            isPinSetup.value = true;
+            Get.offAllNamed('/dashboard');
+          } else {
+            errorMessage.value = verifyPINModel.message ?? "PIN Verification failed";
+          }
+        } else {
+          errorMessage.value = verifyPINModel.message ?? "Invalid PIN";
+        }
       } else {
-        errorMessage.value = "Invalid PIN";
+        errorMessage.value = "PIN Verification failed. Please try again.";
       }
     } catch (e) {
-      errorMessage.value = "PIN verification failed. Please try again";
+      errorMessage.value = "PIN Verification failed. Please try again.";
+      print("PIN verification error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -179,6 +219,8 @@ class LoginController extends GetxController {
   }
 
   Future<void> resendOTP() async {
+    final sendOtpRepo = Get.find<SendOtpRepo>();
+    final response = await sendOtpRepo.getSendOTP();
     isLoading.value = true;
     errorMessage.value = '';
     try {

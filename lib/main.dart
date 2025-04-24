@@ -3,9 +3,13 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pos_dashboard/core/dependencies.dart' as dep;
+import 'package:pos_dashboard/data/models/verify_pin_model.dart';
 import 'package:pos_dashboard/data/repositories/item_repo.dart';
 import 'package:pos_dashboard/data/repositories/merchant_repo.dart';
+import 'package:pos_dashboard/data/repositories/send_otp_repo.dart';
 import 'package:pos_dashboard/data/repositories/top_dashboard_repo.dart';
+import 'package:pos_dashboard/data/repositories/verify_otp_repo.dart';
+import 'package:pos_dashboard/data/repositories/verify_pin_repo.dart';
 import 'package:pos_dashboard/notification/notification_service.dart';
 import 'package:pos_dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:pos_dashboard/presentation/controllers/item_controller.dart';
@@ -35,25 +39,24 @@ Future<void> main() async {
 
     Get.put<ApiClient>(ApiClient(baseUrl: AppConstants.BASE_URL));
     Get.put<Dio>(Dio(BaseOptions(baseUrl: AppConstants.BASE_URL)));
+
     Get.put<LoginRepository>(LoginRepository(dio: Get.find()));
     Get.put<LoginController>(LoginController(loginRepository: Get.find()));
+
+    Get.put<SendOtpRepo>(SendOtpRepo(apiClient: Get.find(), loginController: Get.find()));
+    Get.put<VerifyOtpRepo>(VerifyOtpRepo(apiClient: Get.find(), loginController: Get.find()));
+    Get.put<VerifyPinRepo>(VerifyPinRepo(apiClient: Get.find(), loginController: Get.find()));
+
     Get.lazyPut(() => OTPController(), fenix: true);
-    Get.put<ItemRepository>(
-      ItemRepository(apiClient: Get.find(), loginController: Get.find()),
-    );
-    Get.put<TopDashboardRepo>(
-      TopDashboardRepo(apiClient: Get.find(), loginController: Get.find()),
-    );
-    Get.put<MerchantRepository>(
-      MerchantRepository(apiClient: Get.find(), loginController: Get.find()),
-    );
+
+    Get.put<ItemRepository>(ItemRepository(apiClient: Get.find(), loginController: Get.find()));
     Get.put<ItemController>(ItemController(itemRepository: Get.find()));
-    Get.put<TopDashboardController>(
-      TopDashboardController(topDashboardRepo: Get.find()),
-    );
-    Get.put<MerchantController>(
-      MerchantController(merchantRepository: Get.find()),
-    );
+
+    Get.put<TopDashboardRepo>(TopDashboardRepo(apiClient: Get.find(), loginController: Get.find()));
+    Get.put<TopDashboardController>(TopDashboardController(topDashboardRepo: Get.find()));
+
+    Get.put<MerchantRepository>(MerchantRepository(apiClient: Get.find(), loginController: Get.find()));
+    Get.put<MerchantController>(MerchantController(merchantRepository: Get.find()),);
 
     runApp(const PosDashboardApp());
   } catch (e) {

@@ -23,7 +23,6 @@ class _SalesDetailsPageState extends State<SalesDetailsPage> {
     _topDashboardController = Get.find<TopDashboardController>();
     
     if (Get.arguments != null && Get.arguments['storeId'] != null) {
-        //FROM MAIN SALES PAGE
       _selectedStoreId = Get.arguments['storeId'];
       _refreshData();
     } else {

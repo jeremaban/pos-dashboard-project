@@ -25,7 +25,7 @@ class TopDashboardController extends GetxController {
 
   List<double> _hourlySales = List.filled(24, 0.0);
   List<double> get hourlySales => _hourlySales;
-
+  
   Future<void> getTopList({
     required DateTime date,
     required List<int> storeIds,
@@ -85,4 +85,5 @@ class TopDashboardController extends GetxController {
       print("Error in getTopList: $e");
     }
   }
+  
 }

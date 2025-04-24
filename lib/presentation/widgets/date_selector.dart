@@ -35,7 +35,7 @@ class _DateSelectorState extends State<DateSelector> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(primary: Color(0xFF00308F)),
-            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
           child: child!,
         );
@@ -65,13 +65,16 @@ class _DateSelectorState extends State<DateSelector> {
           },
         ),
         SizedBox(width: Dimensions.width20),
-        GestureDetector(
-          onTap: () => _selectDate(context),
-          child: Text(
-            DateFormat.yMMMMd().format(selectedDate),
-            style: TextStyle(
-              fontSize: Dimensions.font18,
-              fontWeight: FontWeight.bold,
+        Expanded(
+          child: GestureDetector(
+            onTap: () => _selectDate(context),
+            child: Text(
+              DateFormat.yMMMMd().format(selectedDate),
+              style: TextStyle(
+                fontSize: Dimensions.font18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center, // Center the text within the expanded space
             ),
           ),
         ),
@@ -89,3 +92,4 @@ class _DateSelectorState extends State<DateSelector> {
     );
   }
 }
+

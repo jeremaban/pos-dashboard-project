@@ -20,8 +20,8 @@ class VerifyOtpRepo extends GetxService {
 
     Map<String, dynamic> body = {
       "OTP": otp,
-      "MobileNo": loginController.phoneNumber,
-      "UserId": loginController.userId,
+      "MobileNo": "09627551578",
+      "UserId": "ea0e3e85-0820-4856-90a0-59cef96eaf56",
     };
 
     return await apiClient.postData(

@@ -93,6 +93,25 @@ class LoginController extends GetxController {
 
       if (response.statusCode == 200) {
         tempCredentials.value = {'username': username, 'password': password};
+        
+        // Store response data in loginData
+        if (response.data != null) {
+          loginData.value = LoginModel.fromJson(response.data);
+          
+          // Check if there's a temporary access token in the initial login response
+          if (response.data['access_token'] != null) {
+            _accessToken.value = response.data['access_token'];
+          }
+        }
+
+        // Get the SendOtpRepo and call getSendOTP with the current phone number and userId
+        final sendOtpRepo = Get.find<SendOtpRepo>();
+        await sendOtpRepo.getSendOTP(
+          phoneNumber: loginData.value?.phoneNumber,
+          userId: loginData.value?.userId,
+          accessToken: _accessToken.value
+        );
+
         isOTPRequired.value = true;
         Get.toNamed('/otp-verification');
       } else {
@@ -167,7 +186,7 @@ class LoginController extends GetxController {
         errorMessage.value = "OTP verification failed. Please try again.";
       }
     } catch (e) {
-      errorMessage.value = "OPT verification failed. Please try again.";
+      errorMessage.value = "OTP verification failed. Please try again.";
       print("OTP verification error: $e");
     } finally {
       isLoading.value = false;
@@ -220,10 +239,15 @@ class LoginController extends GetxController {
 
   Future<void> resendOTP() async {
     final sendOtpRepo = Get.find<SendOtpRepo>();
-    final response = await sendOtpRepo.getSendOTP();
     isLoading.value = true;
     errorMessage.value = '';
     try {
+      await sendOtpRepo.getSendOTP(
+        phoneNumber: phoneNumber,
+        userId: userId,
+        accessToken: accessToken
+      );
+      
       await Future.delayed(const Duration(seconds: 2));
       Get.snackbar(
         'Success',

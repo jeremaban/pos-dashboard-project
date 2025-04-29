@@ -70,6 +70,7 @@ class ApiClient {
     try {
       print("Attempting POST form data to: $uri");
       print("With data: $data");
+      print("And authToken: $authToken");
 
       if (authToken != null) {
         updateAuthToken(authToken);

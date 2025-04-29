@@ -43,7 +43,7 @@ Future<void> main() async {
     Get.put<LoginRepository>(LoginRepository(dio: Get.find()));
     Get.put<LoginController>(LoginController(loginRepository: Get.find()));
 
-    Get.put<SendOtpRepo>(SendOtpRepo(apiClient: Get.find(), loginController: Get.find()));
+    Get.put<SendOtpRepo>(SendOtpRepo(apiClient: Get.find()));
     Get.put<VerifyOtpRepo>(VerifyOtpRepo(apiClient: Get.find(), loginController: Get.find()));
     Get.put<VerifyPinRepo>(VerifyPinRepo(apiClient: Get.find(), loginController: Get.find()));
 
